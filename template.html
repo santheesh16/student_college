@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Document</title>
+  <style>
+    table {
+      width: 100%;
+    }
+
+    table,
+    td,
+    th {
+      border: 1px solid black;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    tr {
+      text-align: left;
+    }
+
+    th,
+    td {
+      padding: 10px;
+    }
+
+    th {
+      background: #CCC
+    }
+
+    td {
+      border-color: #000;
+      background: #FFF
+    }
+  </style>
+</head>
+
+<body>
+  <table>
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Roll Number</th>
+        <th>Student Name</th>
+        <th>Department</th>
+        <th>Lab Id</th>
+        <th>Date</th>
+        <th>Login Time</th>
+        <th>Logout Time</th>
+        <th>Machine No</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each detail}}
+      <tr>
+        <td>{{this.id}}</td>
+        <td>{{this.roll_number}}</td>
+        <td>{{this.name}}</td>
+        <td>{{this.department}}</td>
+        <td>{{this.lab_id}}</td>
+        <td>{{this.date}}</td>
+        <td>{{this.logintime}}</td>
+        <td>{{this.logouttime}}</td>
+        <td>{{this.machine_no}}</td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+  </div>
+
+</html>

@@ -1,0 +1,16 @@
+[0920/151552.735:ERROR:process_reader_win.cc(123)] NtOpenThread: {Access Denied} A process has requested access to an object, but has not been granted those access rights. (0xc0000022)
+[0920/151552.735:ERROR:process_reader_win.cc(123)] NtOpenThread: {Access Denied} A process has requested access to an object, but has not been granted those access rights. (0xc0000022)
+[0920/151552.818:ERROR:exception_snapshot_win.cc(99)] thread ID 13940 not found in process
+[0920/151552.818:ERROR:exception_snapshot_win.cc(99)] thread ID 4864 not found in process
+[0923/123720.226:ERROR:process_reader_win.cc(123)] NtOpenThread: {Access Denied} A process has requested access to an object, but has not been granted those access rights. (0xc0000022)
+[0923/123720.565:ERROR:exception_snapshot_win.cc(99)] thread ID 6188 not found in process
+[1014/173232.881:ERROR:process_reader_win.cc(123)] NtOpenThread: {Access Denied} A process has requested access to an object, but has not been granted those access rights. (0xc0000022)
+[1014/173232.803:ERROR:process_reader_win.cc(123)] NtOpenThread: {Access Denied} A process has requested access to an object, but has not been granted those access rights. (0xc0000022)
+[1014/173232.977:ERROR:exception_snapshot_win.cc(99)] thread ID 12404 not found in process
+[1014/173232.978:ERROR:exception_snapshot_win.cc(99)] thread ID 12384 not found in process
+[1014/173232.814:ERROR:process_reader_win.cc(123)] NtOpenThread: {Access Denied} A process has requested access to an object, but has not been granted those access rights. (0xc0000022)
+[1014/173232.979:ERROR:exception_snapshot_win.cc(99)] thread ID 12396 not found in process
+[1222/154457.849:ERROR:directory_reader_win.cc(43)] FindFirstFile: The system cannot find the path specified. (0x3)
+[0102/094452.609:ERROR:directory_reader_win.cc(43)] FindFirstFile: The system cannot find the path specified. (0x3)
+[0110/224752.032:ERROR:directory_reader_win.cc(43)] FindFirstFile: The system cannot find the path specified. (0x3)
+[0111/123149.520:ERROR:directory_reader_win.cc(43)] FindFirstFile: The system cannot find the path specified. (0x3)
