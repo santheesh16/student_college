@@ -3,25 +3,13 @@ const jwt = require("jsonwebtoken");
 const connection = require("../config/config.js");
 const _ = require("lodash");
 const expressJwt = require("express-jwt");
-require("../constant");
-
-const query = {
-  //View or Select query
-  SELECT_ROLLNUMBER_STUDENT: "SELECT * FROM students WHERE roll_number = ?;",
-  SELECT_ROLLNUMBER_ATTENDANCE:
-    "SELECT roll_number FROM attendances WHERE attendances.roll_number = ?;",
-
-  //Insert or Create row query
-  INSERT_STUDENT: "INSERT INTO students SET ? ;",
-  INSERT_ATTENDANCE: "INSERT INTO attendances SET ? ;",
-};
+let Query = require("../constant");
 
 const academicYear = (batch) => {
   var begYear = parseInt(batch.substring(0, 4));
   var today = new Date();
   var curMonth = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
   var curYear = today.getFullYear();
-  console.log(begYear);
   var studYear = curYear - begYear;
 
   var acadYear = curYear - 1;
@@ -68,17 +56,16 @@ exports.signup = (req, res) => {
   };
   const rollNumber = req.body.rollNumber;
   connection.query(
-    "SELECT * FROM students WHERE roll_number = ?;",
+    Query.STUDENT_ROLLNUMBER,
     rollNumber,
     function (error, user, fields) {
-      console.log(user);
       if (user.length > 0) {
         return res.status(400).json({
           error: `${rollNumber} is already exist`,
         });
       } else {
         connection.query(
-          "INSERT INTO students SET ? ;",
+          Query.ADD_STUDENT,
           student,
           function (error, user, fields) {
             if (error) {
@@ -103,7 +90,7 @@ exports.signin = (req, res) => {
   const roll_number = req.body.roll_number;
   const password = req.body.password;
   connection.query(
-    query.SELECT_ROLLNUMBER_STUDENT,
+    Query.STUDENT_ROLLNUMBER,
     [roll_number],
     (error, student, fields) => {
       if (error) {
@@ -136,7 +123,7 @@ exports.signin = (req, res) => {
             };
 
             connection.query(
-              "INSERT INTO attendances SET ? ;",
+              Query.ADD_ATTENDANCE,
               login_attendance,
               function (error, user, fields) {
                 if (error) {
@@ -165,16 +152,15 @@ exports.signin = (req, res) => {
           }
         } else {
           connection.query(
-            "SELECT * FROM admin WHERE admin.roll_number = ?;",
+            Query.ADMIN_ROLLNUMBER,
             [roll_number],
             (error, user, fields) => {
-              console.log(roll_number);
               if (error) {
+                console.log("ADMIN LOGIN", error);
                 return res.status(400).json({
                   error: "Some error occured",
                 });
               } else {
-                console.log(user.length);
                 if (user.length > 0) {
                   const comparision = bcrypt.compareSync(
                     password,
@@ -213,14 +199,14 @@ exports.signin = (req, res) => {
 exports.signout = (req, res) => {
   const userId = req.params.roll_number;
   connection.query(
-    "SELECT * FROM attendances WHERE attendances.roll_number = ?;",
+    Query.ATTENDANCE_ROLLNUMBER,
     userId,
     function (error, user, fields) {
       if (user[0].role === "student") {
         user[0].logouttime = new Date();
         const logouttime = user[0].logouttime;
         connection.query(
-          "UPDATE attendances SET logouttime = ? WHERE roll_number = ? ;",
+          Query.UPDATE_STUD_LOGOUT,
           [logouttime, userId],
           (error, user, fields) => {
             if (error) {
@@ -250,7 +236,7 @@ exports.requireSignin = expressJwt({
 
 exports.adminMiddleware = (req, res, next) => {
   connection.query(
-    "SELECT * FROM admin WHERE id = ?;",
+    Query.ADMIN_ROLLNUMBER,
     req.user.id,
     (error, user, fields) => {
       if (error || user[0].id == 0) {

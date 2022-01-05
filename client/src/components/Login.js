@@ -6,14 +6,10 @@ import { authenticate,isAuth } from "../auth/helpers";
 import "../App.css";
 import KPR_LOGO from "../assets/img/Kprlogo.webp";
 import Axios from "axios";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faIdCardAlt ,  faKey} from "@fortawesome/free-solid-svg-icons";
-const IdCardAlt = <FontAwesomeIcon icon={faIdCardAlt} />;
-const Key = <FontAwesomeIcon icon={faKey} />;
 
 const Signin = ({ history }) => {
   const [values, setValues] = useState({
-    roll_number: "18cs1",
+    roll_number: "18st1",
     password: "kpriet@123",
     buttonText: "Submit"
   });
@@ -71,11 +67,7 @@ const Signin = ({ history }) => {
                 <input onChange={handleChange('password')} value={password} type="text" className="form-control"/>
             </div>
            <div>
-           {/* <div className="form-inline d-flex justify-content-end">
-                <Link to="/forgot" className="btn btn-sm btn-outline-success my-sm-0">
-                    Forgot Password
-                </Link>
-           </div> */}
+           
             <div  className=" form-inline">
                 <button className="btn btn-primary" onClick={clickSubmit}>
                     {buttonText}

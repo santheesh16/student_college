@@ -3,13 +3,11 @@ import Layout from "../components/Navbar";
 import { getCookie, signout, setLocalStorage } from "../auth/helpers";
 import Axios from "axios";
 import "../App.css";
-
 import { ToastContainer, toast } from "react-toastify";
 import "../../node_modules/react-toastify/dist/ReactToastify.min.css";
 const fileSaver = require("file-saver");
 
 const Attendance = ({ history }) => {
-  const [contacts, setContacts] = useState([]);
   const [values, setValues] = useState({
     labName: "",
     labDepartment: "",
@@ -22,15 +20,21 @@ const Attendance = ({ history }) => {
     studentName: "",
     buttonView: "File Download",
     labsDepartment: ["Choose..."],
+    labNames: [],
     details: [],
+    labDetails : []
   });
 
-  let type = null;
-  let options = null;
+  useEffect(() => {
+    loadBlock();
+  }, []);
+
+  const optionsView = (lists) => {
+    return lists.map((el) => <option key={el}>{el}</option>);
+  };
+
   let batchOption = null;
   let academicOption = null;
-  let studentOption = null;
-  let labsDept = null;
 
   const dateConversion = () => {
     var today = new Date();
@@ -45,13 +49,9 @@ const Attendance = ({ history }) => {
       minusYear += 1;
     }
 
-    batchOption = batchOptions.map((el) => <option key={el}>{el}</option>);
-    if(labsDepartment.length != 0 ){
-      
-    }
-    
-    var academicOptions = ["Choose..."];
+    batchOption = optionsView( batchOptions);
 
+    var academicOptions = ["Choose..."];
 
     if (studentBatch !== "Choose...") {
       var begYear = parseInt(studentBatch.substring(0, 4));
@@ -64,80 +64,8 @@ const Attendance = ({ history }) => {
         j++;
       }
     }
-
-    academicOption = academicOptions.map((el) => (
-      <option key={el}>{el}</option>
-    ));
+    academicOption = optionsView(academicOptions);
   };
-
-  const handleChange = (name) => (event) => {
-    console.log(event.target.value);
-    setValues({ ...values, [name]: event.target.value });
-  };
-
-  useEffect(() => {
-    loadBlock();
-  }, []);
-
-  const loadBlock = () => {
-    Axios({
-      method: "GET",
-      url: "http://localhost:8000/api/lab/load-details/all",
-      headers: {
-        Authorization: `Bearer ${getCookie("token")}`,
-      },
-    })
-      .then((response) => {
-        console.log("GET LAB SUCCESS", response.data);
-        for (var i = 0; i < response.data.length; i++) {
-          labsDepartment.push(response.data[i].lab_department);
-        }
-
-        let a = [];
-        for (var i=0, l=labsDepartment.length; i<l; i++){
-        if (a.indexOf(labsDepartment[i]) === -1 && labsDepartment[i] !== ''){
-            a.push(labsDepartment[i]);
-          }
-        }
-        setValues({...values, labsDepartment: a });
-        console.log(labsDepartment)
-      })
-      .catch((error) => {
-        console.log("GET LAB  ERROR", error.response.data.error);
-        if (error.response.status === 401) {
-          signout(() => {
-            history.push("/");
-          });
-        }
-      });
-  };
-  /** Different arrays for different dropdowns */
-  const CSE = [
-    "Choose...",
-    "Software Engineer",
-    "Data Structure ",
-    "Computer Network",
-    "Redhat Interprised",
-  ];
-  const ECE = ["Choose...", "Computer Electrical", "Programming Python"];
-  const EEE = [
-    "Choose...",
-    "Electronic Science",
-    "Designing in Electronic",
-    "Electrical Computer",
-  ];
-  const MECH = [
-    "Choose...",
-    "English Listening ",
-    "Object Oriented",
-    "Basics Computer Programming",
-  ];
-  const BIOMED = [
-    "Choose...",
-    "Staff Maintain Computer",
-    "Student Details Lab",
-    "Programming Lab",
-  ];
 
   const {
     labName,
@@ -152,514 +80,181 @@ const Attendance = ({ history }) => {
     details,
     studentName,
     labsDepartment,
+    labNames,
   } = values;
 
-  /** Setting Type variable according to dropdown */
-  if (labDepartment === "CSE") {
-    type = CSE;
-  } else if (labDepartment === "ECE") {
-    type = ECE;
-  } else if (labDepartment === "EEE") {
-    type = EEE;
-  } else if (labDepartment === "MECH") {
-    type = MECH;
-  } else if (labDepartment === "BIOMED") {
-    type = BIOMED;
-  }
+  const handleChange = (name) => (event) => {
+    setValues({ ...values, [name]: event.target.value });
+  };
+
+
+  const loadBlock = () => {
+    Axios({
+      method: "GET",
+      url: "http://localhost:8000/api/lab/load-details/all",
+      headers: {
+        Authorization: `Bearer ${getCookie("token")}`,
+      },
+    })
+      .then((response) => {
+        console.log("GET LAB SUCCESS", response.data);
+        let labDetails = response.data
+        for (var i = 0; i < response.data.length; i++) {
+          labsDepartment.push(response.data[i].lab_department);
+        }
+        let dept = [];
+        for (var i = 0, l = labsDepartment.length; i < l; i++) {
+          if (
+            dept.indexOf(labsDepartment[i]) === -1 &&
+            labsDepartment[i] !== ""
+          ) {
+            dept.push(labsDepartment[i]);
+          }
+        }
+        setValues({ ...values, labsDepartment: dept});
+        let names = ["Choose Dept"]
+        labNames.push(names)
+        for (var i = 1; i < dept.length; i++) {
+          names = []
+          for (var j = 0; j < labDetails.length; j++) {
+            if(dept[i] === labDetails[j].lab_department){
+              names.push(labDetails[j].lab_name)
+            }
+          }
+          labNames.push(names)
+        }
+      })
+      .catch((error) => {
+        console.log("GET LAB  ERROR", error.response.data.error);
+        if (error.response.status === 401) {
+          signout(() => {
+            history.push("/");
+          });
+        }
+      });
+  };
+
+  const loadAttendanceDetails = (event) => {
+    let searchAttendance = {
+      labName: labName,
+      dateWise: dateWise,
+      studentBatch: studentBatch,
+      academicYear: academicYear,
+      semester: semester,
+      studentDept: studentDept,
+      section: section,
+      studentName: studentName,
+    };
+    const data = JSON.stringify({ searchColumns: searchAttendance });
+    event.preventDefault();
+    Axios({
+      method: "POST",
+      url: `http://localhost:8000/api/attendance/load-details`,
+      data,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getCookie("token")}`,
+      },
+    })
+      .then((response) => {
+        console.log("STUDENT ATTENDACNE GET", response);
+        setValues({
+          ...values,
+          details: response.data,
+        });
+      })
+      .catch((error) => {
+        console.log("STUDENT ATTENDACNE GET ERROR", error.response);
+        toast.error(error.response.data.error);
+        if (error.response.status === 401) {
+          signout(() => {
+            history.push("/");
+          });
+        }
+      });
+  };
 
   const downloadPdf = (event) => {
     event.preventDefault();
-    if (
-      labName !== "" &&
-      dateWise === "" &&
-      studentBatch === "" &&
-      academicYear === "" &&
-      semester === "" &&
-      studentDept === "" &&
-      section === ""
-    ) {
-      Axios.get(`http://localhost:8000/api/attendance/pdf-labName/${labName}`)
-        .then((response) => {
-          Axios.get(`http://localhost:8000/api/attendance/pdf/download`, {
-            responseType: "blob",
-          })
-            .then((response) => {
-              console.log("STUDENT ATTENDACNE GET", response.data);
-              var blob = new Blob([response.data], { type: "application/pdf" });
-              fileSaver.saveAs(blob, "Attendanace.pdf");
-            })
-            .catch((error) => {
-              console.log(
-                "STUDENT ATTENDACNE PDF DOWNLOAD ERROR",
-                error.response
-              );
-              toast.error(error.response.data.error);
-            });
+    let searchAttendance = {
+      labName: labName,
+      dateWise: dateWise,
+      studentBatch: studentBatch,
+      academicYear: academicYear,
+      semester: semester,
+      studentDept: studentDept,
+      section: section,
+      studentName: studentName,
+    };
+    const data = JSON.stringify({ searchColumns: searchAttendance });
+    Axios.post(`http://localhost:8000/api/attendance/pdf`, data, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        Axios.get(`http://localhost:8000/api/attendance/pdf/download`, {
+          responseType: "blob",
         })
-        .catch((error) => {
-          console.log("STUDENT ATTENDACNE GET ERROR", error.response);
-          toast.error(error.response.data.error);
-          if (error.response.status === 401) {
-            signout(() => {
-              history.push("/");
-            });
-          }
-        });
-    } else if (
-      labName !== " " &&
-      dateWise !== " " &&
-      studentBatch === "" &&
-      academicYear === "" &&
-      semester === "" &&
-      studentDept === "" &&
-      section === ""
-    ) {
-      Axios.get(
-        `http://localhost:8000/api/attendance/pdf-dateWise/${labName}/${dateWise}`
-      )
-        .then((response) => {
-          Axios.get(`http://localhost:8000/api/attendance/pdf/download`, {
-            responseType: "blob",
+          .then((response) => {
+            console.log("STUDENT ATTENDACNE GET", response.data);
+            var blob = new Blob([response.data], { type: "application/pdf" });
+            fileSaver.saveAs(blob, "Attendanace.pdf");
           })
-            .then((response) => {
-              console.log("STUDENT ATTENDACNE GET", response.data);
-              var blob = new Blob([response.data], { type: "application/pdf" });
-              fileSaver.saveAs(blob, "Attendanace.pdf");
-            })
-            .catch((error) => {
-              console.log(
-                "STUDENT ATTENDACNE PDF DOWNLOAD ERROR",
-                error.response
-              );
-              toast.error(error.response.data.error);
-            });
-        })
-        .catch((error) => {
-          console.log("STUDENT ATTENDACNE GET ERROR", error.response);
-          toast.error(error.response.data.error);
-          if (error.response.status === 401) {
-            signout(() => {
-              history.push("/");
-            });
-          }
-        });
-    } else if (
-      labName !== " " &&
-      dateWise !== " " &&
-      studentBatch !== "" &&
-      academicYear === "" &&
-      semester === "" &&
-      studentDept === "" &&
-      section === ""
-    ) {
-      Axios.get(
-        `http://localhost:8000/api/attendance/pdf-batch/${labName}/${dateWise}/${studentBatch}`
-      )
-        .then((response) => {
-          Axios.get(`http://localhost:8000/api/attendance/pdf/download`, {
-            responseType: "blob",
-          })
-            .then((response) => {
-              console.log("STUDENT ATTENDACNE GET", response.data);
-              var blob = new Blob([response.data], { type: "application/pdf" });
-              fileSaver.saveAs(blob, "Attendanace.pdf");
-            })
-            .catch((error) => {
-              console.log(
-                "STUDENT ATTENDACNE PDF DOWNLOAD ERROR",
-                error.response
-              );
-              toast.error(error.response.data.error);
-            });
-        })
-        .catch((error) => {
-          console.log("STUDENT ATTENDACNE GET ERROR", error.response);
-          toast.error(error.response.data.error);
-          if (error.response.status === 401) {
-            signout(() => {
-              history.push("/");
-            });
-          }
-        });
-    } else if (
-      labName !== " " &&
-      dateWise !== " " &&
-      studentBatch !== "" &&
-      academicYear !== "" &&
-      semester === "" &&
-      studentDept === "" &&
-      section === ""
-    ) {
-      Axios.get(
-        `http://localhost:8000/api/attendance/pdf-acedemic/${labName}/${dateWise}/${studentBatch}/${academicYear}`
-      )
-        .then((response) => {
-          Axios.get(`http://localhost:8000/api/attendance/pdf/download`, {
-            responseType: "blob",
-          })
-            .then((response) => {
-              console.log("STUDENT ATTENDACNE GET", response.data);
-              var blob = new Blob([response.data], { type: "application/pdf" });
-              fileSaver.saveAs(blob, "Attendanace.pdf");
-            })
-            .catch((error) => {
-              console.log(
-                "STUDENT ATTENDACNE PDF DOWNLOAD ERROR",
-                error.response
-              );
-              toast.error(error.response.data.error);
-            });
-        })
-        .catch((error) => {
-          console.log("STUDENT ATTENDACNE GET ERROR", error.response);
-          toast.error(error.response.data.error);
-          if (error.response.status === 401) {
-            signout(() => {
-              history.push("/");
-            });
-          }
-        });
-    } else if (
-      labName !== " " &&
-      dateWise !== " " &&
-      studentBatch !== "" &&
-      academicYear !== "" &&
-      semester !== "" &&
-      studentDept === "" &&
-      section === ""
-    ) {
-      Axios.get(
-        `http://localhost:8000/api/attendance/pdf-semester/${labName}/${dateWise}/${studentBatch}/${academicYear}/${semester}`
-      )
-        .then((response) => {
-          Axios.get(`http://localhost:8000/api/attendance/pdf/download`, {
-            responseType: "blob",
-          })
-            .then((response) => {
-              console.log("STUDENT ATTENDACNE GET", response.data);
-              var blob = new Blob([response.data], { type: "application/pdf" });
-              fileSaver.saveAs(blob, "Attendanace.pdf");
-            })
-            .catch((error) => {
-              console.log(
-                "STUDENT ATTENDACNE PDF DOWNLOAD ERROR",
-                error.response
-              );
-              toast.error(error.response.data.error);
-            });
-        })
-        .catch((error) => {
-          console.log("STUDENT ATTENDACNE GET ERROR", error.response);
-          toast.error(error.response.data.error);
-          if (error.response.status === 401) {
-            signout(() => {
-              history.push("/");
-            });
-          }
-        });
-    } else if (
-      labName !== " " &&
-      dateWise !== " " &&
-      studentBatch !== "" &&
-      academicYear !== "" &&
-      semester !== "" &&
-      studentDept !== "" &&
-      section === ""
-    ) {
-      Axios.get(
-        `http://localhost:8000/api/attendance/pdf-studDept/${labName}/${dateWise}/${studentBatch}/${academicYear}/${semester}/${studentDept}`
-      )
-        .then((response) => {
-          Axios.get(`http://localhost:8000/api/attendance/pdf/download`, {
-            responseType: "blob",
-          })
-            .then((response) => {
-              console.log("STUDENT ATTENDACNE GET", response.data);
-              var blob = new Blob([response.data], { type: "application/pdf" });
-              fileSaver.saveAs(blob, "Attendanace.pdf");
-            })
-            .catch((error) => {
-              console.log(
-                "STUDENT ATTENDACNE PDF DOWNLOAD ERROR",
-                error.response
-              );
-              toast.error(error.response.data.error);
-            });
-        })
-        .catch((error) => {
-          console.log("STUDENT ATTENDACNE GET ERROR", error.response);
-          toast.error(error.response.data.error);
-          if (error.response.status === 401) {
-            signout(() => {
-              history.push("/");
-            });
-          }
-        });
-    } else if (
-      labName !== " " &&
-      dateWise !== " " &&
-      studentBatch !== "" &&
-      academicYear !== "" &&
-      semester !== "" &&
-      studentDept !== "" &&
-      section !== ""
-    ) {
-      Axios.get(
-        `http://localhost:8000/api/attendance/pdf-studSection/${labName}/${dateWise}/${studentBatch}/${academicYear}/${semester}/${studentDept}/${section}`
-      )
-        .then((response) => {
-          Axios.get(`http://localhost:8000/api/attendance/pdf/download`, {
-            responseType: "blob",
-          })
-            .then((response) => {
-              console.log("STUDENT ATTENDACNE GET", response.data);
-              var blob = new Blob([response.data], { type: "application/pdf" });
-              fileSaver.saveAs(blob, "Attendanace.pdf");
-            })
-            .catch((error) => {
-              console.log(
-                "STUDENT ATTENDACNE PDF DOWNLOAD ERROR",
-                error.response
-              );
-              toast.error(error.response.data.error);
-            });
-        })
-        .catch((error) => {
-          console.log("STUDENT ATTENDACNE GET ERROR", error.response);
-          toast.error(error.response.data.error);
-          if (error.response.status === 401) {
-            signout(() => {
-              history.push("/");
-            });
-          }
-        });
-    } else {
-      toast.error("Please select correct sorted options!!!");
-    }
+          .catch((error) => {
+            console.log(
+              "STUDENT ATTENDACNE PDF DOWNLOAD ERROR",
+              error.response
+            );
+            toast.error(error.response.data.error);
+          });
+      })
+      .catch((error) => {
+        console.log("STUDENT ATTENDACNE GET ERROR", error.response);
+        toast.error(error.response.data.error);
+        if (error.response.status === 401) {
+          signout(() => {
+            history.push("/");
+          });
+        }
+      });
   };
 
   const downloadExcel = (event) => {
     event.preventDefault();
-    if (
-      labName !== "" &&
-      dateWise === "" &&
-      studentBatch === "" &&
-      academicYear === "" &&
-      semester === "" &&
-      studentDept === "" &&
-      section === ""
-    ) {
-      Axios.get(
-        `http://localhost:8000/api/attendance/excel-labName/${labName}`,
-        {
-          responseType: "arraybuffer",
-        }
-      )
-        .then((response) => {
-          console.log("STUDENT ATTENDACNE EXCEl", response);
-          var blob = new Blob([response.data], {
-            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-          });
-          fileSaver.saveAs(blob, "Attendanace.xlsx");
-        })
-        .catch((error) => {
-          console.log("STUDENT ATTENDACNE EXCEl ERROR", error.response);
-          toast.error(error.response.data.error);
-          if (error.response.status === 401) {
-            signout(() => {
-              history.push("/");
-            });
-          }
+    let searchAttendance = {
+      labName: labName,
+      dateWise: dateWise,
+      studentBatch: studentBatch,
+      academicYear: academicYear,
+      semester: semester,
+      studentDept: studentDept,
+      section: section,
+      studentName: studentName,
+    };
+    const data = JSON.stringify({ searchColumns: searchAttendance });
+    Axios.post(`http://localhost:8000/api/attendance/excel`, data, {
+      responseType: "arraybuffer",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        console.log("STUDENT ATTENDACNE EXCEl", response);
+        var blob = new Blob([response.data], {
+          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         });
-    } else if (
-      labName !== " " &&
-      dateWise !== " " &&
-      studentBatch === "" &&
-      academicYear === "" &&
-      semester === "" &&
-      studentDept === "" &&
-      section === ""
-    ) {
-      Axios.get(
-        `http://localhost:8000/api/attendance/excel-dateWise/${labName}/${dateWise}`,
-        {
-          responseType: "arraybuffer",
-        }
-      )
-        .then((response) => {
-          console.log("STUDENT ATTENDACNE EXCEl", response);
-          var blob = new Blob([response.data], {
-            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        fileSaver.saveAs(blob, "Attendanace.xlsx");
+      })
+      .catch((error) => {
+        console.log("STUDENT ATTENDACNE EXCEl ERROR", error.response);
+        toast.error(error.response.data.error);
+        if (error.response.status === 401) {
+          signout(() => {
+            history.push("/");
           });
-          fileSaver.saveAs(blob, "Attendanace.xlsx");
-        })
-        .catch((error) => {
-          console.log("STUDENT ATTENDACNE EXCEl ERROR", error.response);
-          toast.error(error.response.data.error);
-          if (error.response.status === 401) {
-            signout(() => {
-              history.push("/");
-            });
-          }
-        });
-    } else if (
-      labName !== " " &&
-      dateWise !== " " &&
-      studentBatch !== "" &&
-      academicYear === "" &&
-      semester === "" &&
-      studentDept === "" &&
-      section === ""
-    ) {
-      Axios.get(
-        `http://localhost:8000/api/attendance/excel-batch/${labName}/${dateWise}/${studentBatch}`,
-        {
-          responseType: "arraybuffer",
         }
-      )
-        .then((response) => {
-          console.log("STUDENT ATTENDACNE EXCEl", response);
-          var blob = new Blob([response.data], {
-            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-          });
-          fileSaver.saveAs(blob, "Attendanace.xlsx");
-        })
-        .catch((error) => {
-          console.log("STUDENT ATTENDACNE EXCEl ERROR", error.response);
-          toast.error(error.response.data.error);
-          if (error.response.status === 401) {
-            signout(() => {
-              history.push("/");
-            });
-          }
-        });
-    } else if (
-      labName !== " " &&
-      dateWise !== "" &&
-      studentBatch !== "" &&
-      academicYear !== "" &&
-      semester === "" &&
-      studentDept === "" &&
-      section === ""
-    ) {
-      Axios.get(
-        `http://localhost:8000/api/attendance/excel-acedemic/${labName}/${dateWise}/${studentBatch}/${academicYear}`,
-        {
-          responseType: "arraybuffer",
-        }
-      )
-        .then((response) => {
-          console.log("STUDENT ATTENDACNE EXCEl", response);
-          var blob = new Blob([response.data], {
-            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-          });
-          fileSaver.saveAs(blob, "Attendanace.xlsx");
-        })
-        .catch((error) => {
-          console.log("STUDENT ATTENDACNE EXCEl ERROR", error.response);
-          toast.error(error.response.data.error);
-          if (error.response.status === 401) {
-            signout(() => {
-              history.push("/");
-            });
-          }
-        });
-    } else if (
-      labName !== " " &&
-      dateWise !== " " &&
-      studentBatch !== "" &&
-      academicYear !== "" &&
-      semester !== "" &&
-      studentDept === "" &&
-      section === ""
-    ) {
-      Axios.get(
-        `http://localhost:8000/api/attendance/excel-semester/${labName}/${dateWise}/${studentBatch}/${academicYear}/${semester}`,
-        {
-          responseType: "arraybuffer",
-        }
-      )
-        .then((response) => {
-          console.log("STUDENT ATTENDACNE EXCEl", response);
-          var blob = new Blob([response.data], {
-            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-          });
-          fileSaver.saveAs(blob, "Attendanace.xlsx");
-        })
-        .catch((error) => {
-          console.log("STUDENT ATTENDACNE EXCEl ERROR", error.response);
-          toast.error(error.response.data.error);
-          if (error.response.status === 401) {
-            signout(() => {
-              history.push("/");
-            });
-          }
-        });
-    } else if (
-      labName !== " " &&
-      dateWise !== " " &&
-      studentBatch !== "" &&
-      academicYear !== "" &&
-      semester !== "" &&
-      studentDept !== "" &&
-      section === ""
-    ) {
-      Axios.get(
-        `http://localhost:8000/api/attendance/excel-studDept/${labName}/${dateWise}/${studentBatch}/${academicYear}/${semester}/${studentDept}`,
-        {
-          responseType: "arraybuffer",
-        }
-      )
-        .then((response) => {
-          console.log("STUDENT ATTENDACNE EXCEl", response);
-          var blob = new Blob([response.data], {
-            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-          });
-          fileSaver.saveAs(blob, "Attendanace.xlsx");
-        })
-        .catch((error) => {
-          console.log("STUDENT ATTENDACNE EXCEl ERROR", error.response);
-          toast.error(error.response.data.error);
-          if (error.response.status === 401) {
-            signout(() => {
-              history.push("/");
-            });
-          }
-        });
-    } else if (
-      labName !== " " &&
-      dateWise !== " " &&
-      studentBatch !== "" &&
-      academicYear !== "" &&
-      semester !== "" &&
-      studentDept !== "" &&
-      section !== ""
-    ) {
-      Axios.get(
-        `http://localhost:8000/api/attendance/excel-studSection/${labName}/${dateWise}/${studentBatch}/${academicYear}/${semester}/${studentDept}/${section}`,
-        {
-          responseType: "arraybuffer",
-        }
-      )
-        .then((response) => {
-          console.log("STUDENT ATTENDACNE EXCEl", response);
-          var blob = new Blob([response.data], {
-            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-          });
-          fileSaver.saveAs(blob, "Attendanace.xlsx");
-        })
-        .catch((error) => {
-          console.log("STUDENT ATTENDACNE EXCEl ERROR", error.response);
-          toast.error(error.response.data.error);
-          if (error.response.status === 401) {
-            signout(() => {
-              history.push("/");
-            });
-          }
-        });
-    } else {
-      toast.error("Please select options in correct order!!");
-    }
+      });
   };
   const attendanceDetail = () => {
     return (
@@ -699,242 +294,6 @@ const Attendance = ({ history }) => {
       </table>
     );
   };
-  if (type) {
-    options = type.map((el) => <option key={el}>{el}</option>);
-  }
-
-  if (details) {
-    studentOption = details.map((el) => <option key={el}>{el.name}</option>);
-  }
-  const loadAttendanceDetails = (event) => {
-    event.preventDefault();
-    if (
-      labName !== "" &&
-      dateWise === "" &&
-      studentBatch === "" &&
-      academicYear === "" &&
-      semester === "" &&
-      studentDept === "" &&
-      section === ""
-    ) {
-      console.log("Sample outpt1");
-      Axios({
-        method: "GET",
-        url: `http://localhost:8000/api/attendance/load-details/${labName}`,
-        headers: {
-          Authorization: `Bearer ${getCookie("token")}`,
-        },
-      })
-        .then((response) => {
-          console.log("STUDENT ATTENDACNE GET", response);
-          setValues({
-            ...values,
-            details: response.data,
-          });
-        })
-        .catch((error) => {
-          console.log("STUDENT ATTENDACNE GET ERROR", error.response);
-          toast.error(error.response.data.error);
-          if (error.response.status === 401) {
-            signout(() => {
-              history.push("/");
-            });
-          }
-        });
-    } else if (
-      labName !== " " &&
-      dateWise !== " " &&
-      studentBatch === "" &&
-      academicYear === "" &&
-      semester === "" &&
-      studentDept === "" &&
-      section === ""
-    ) {
-      Axios({
-        method: "GET",
-        url: `http://localhost:8000/api/attendance/load-details/${labName}/${dateWise}`,
-        headers: {
-          Authorization: `Bearer ${getCookie("token")}`,
-        },
-      })
-        .then((response) => {
-          console.log("STUDENT ATTENDACNE GET", response);
-          setValues({
-            ...values,
-            details: response.data,
-          });
-        })
-        .catch((error) => {
-          console.log("STUDENT ATTENDACNE GET ERROR", error.response);
-          toast.error(error.response.data.error);
-          if (error.response.status === 401) {
-            signout(() => {
-              history.push("/");
-            });
-          }
-        });
-    } else if (
-      labName !== " " &&
-      dateWise !== " " &&
-      studentBatch !== "" &&
-      academicYear === "" &&
-      semester === "" &&
-      studentDept === "" &&
-      section === ""
-    ) {
-      Axios({
-        method: "GET",
-        url: `http://localhost:8000/api/attendance/load-details/${labName}/${dateWise}/${studentBatch}`,
-        headers: {
-          Authorization: `Bearer ${getCookie("token")}`,
-        },
-      })
-        .then((response) => {
-          console.log("STUDENT ATTENDACNE GET", response);
-          setValues({
-            ...values,
-            details: response.data,
-          });
-        })
-        .catch((error) => {
-          console.log("STUDENT ATTENDACNE GET ERROR", error.response);
-          toast.error(error.response.data.error);
-          if (error.response.status === 401) {
-            signout(() => {
-              history.push("/");
-            });
-          }
-        });
-    } else if (
-      labName !== " " &&
-      dateWise !== " " &&
-      studentBatch !== "" &&
-      academicYear !== "" &&
-      semester === "" &&
-      studentDept === "" &&
-      section === ""
-    ) {
-      Axios({
-        method: "GET",
-        url: `http://localhost:8000/api/attendance/load-details/${labName}/${dateWise}/${studentBatch}/${academicYear}`,
-        headers: {
-          Authorization: `Bearer ${getCookie("token")}`,
-        },
-      })
-        .then((response) => {
-          console.log("STUDENT ATTENDACNE GET", response);
-          setValues({
-            ...values,
-            details: response.data,
-          });
-        })
-        .catch((error) => {
-          console.log("STUDENT ATTENDACNE GET ERROR", error.response);
-          toast.error(error.response.data.error);
-          if (error.response.status === 401) {
-            signout(() => {
-              history.push("/");
-            });
-          }
-        });
-    } else if (
-      labName !== " " &&
-      dateWise !== " " &&
-      studentBatch !== "" &&
-      academicYear !== "" &&
-      semester !== "" &&
-      studentDept === "" &&
-      section === ""
-    ) {
-      Axios({
-        method: "GET",
-        url: `http://localhost:8000/api/attendance/load-details/${labName}/${dateWise}/${studentBatch}/${academicYear}/${semester}`,
-        headers: {
-          Authorization: `Bearer ${getCookie("token")}`,
-        },
-      })
-        .then((response) => {
-          console.log("STUDENT ATTENDACNE GET", response);
-          setValues({
-            ...values,
-            details: response.data,
-          });
-        })
-        .catch((error) => {
-          console.log("STUDENT ATTENDACNE GET ERROR", error.response);
-          toast.error(error.response.data.error);
-          if (error.response.status === 401) {
-            signout(() => {
-              history.push("/");
-            });
-          }
-        });
-    } else if (
-      labName !== " " &&
-      dateWise !== " " &&
-      studentBatch !== "" &&
-      academicYear !== "" &&
-      semester !== "" &&
-      studentDept !== "" &&
-      section === ""
-    ) {
-      Axios({
-        method: "GET",
-        url: `http://localhost:8000/api/attendance/load-details/${labName}/${dateWise}/${studentBatch}/${academicYear}/${semester}/${studentDept}`,
-        headers: {
-          Authorization: `Bearer ${getCookie("token")}`,
-        },
-      })
-        .then((response) => {
-          console.log("STUDENT ATTENDACNE GET", response);
-          setValues({
-            ...values,
-            details: response.data,
-          });
-        })
-        .catch((error) => {
-          console.log("STUDENT ATTENDACNE GET ERROR", error.response);
-          toast.error(error.response.data.error);
-          if (error.response.status === 401) {
-            signout(() => {
-              history.push("/");
-            });
-          }
-        });
-    } else if (
-      labName !== " " &&
-      dateWise !== " " &&
-      studentBatch !== "" &&
-      academicYear !== "" &&
-      semester !== "" &&
-      studentDept !== "" &&
-      section !== ""
-    ) {
-      Axios({
-        method: "GET",
-        url: `http://localhost:8000/api/attendance/load-details/${labName}/${dateWise}/${studentBatch}/${academicYear}/${semester}/${studentDept}/${section}`,
-        headers: {
-          Authorization: `Bearer ${getCookie("token")}`,
-        },
-      })
-        .then((response) => {
-          console.log("STUDENT ATTENDACNE GET", response);
-          setValues({
-            ...values,
-            details: response.data,
-          });
-        })
-        .catch((error) => {
-          console.log("STUDENT ATTENDACNE GET ERROR", error.response);
-          toast.error(error.response.data.error);
-          if (error.response.status === 401) {
-            signout(() => {
-              history.push("/");
-            });
-          }
-        });
-    }
-  };
   const attendence = () => (
     <form>
       <div className="form-row">
@@ -947,8 +306,11 @@ const Attendance = ({ history }) => {
             value={labDepartment}
             className="form-control"
           >
-            { labsDepartment.length > 0 ?
-            labsDept = labsDepartment.map((el) => <option key={el}>{el}</option>) : labsDept = ["No Labs"]}
+            {labsDepartment.length > 0 ? (
+              optionsView(labsDepartment)
+            ) : (
+              <option>No Labs</option>
+            )}
           </select>
         </div>
         <div className="form-group col-md-2 ">
@@ -960,7 +322,11 @@ const Attendance = ({ history }) => {
             value={labName}
             className="form-control"
           >
-            {options}
+            {labNames.length > 0 ? (
+              optionsView(labNames[labsDepartment.indexOf(labDepartment)])
+            ) : (
+              <option>Choose Dept</option>
+            )}
           </select>
         </div>
         <div className="form-group col-md-2 ">
@@ -995,7 +361,6 @@ const Attendance = ({ history }) => {
             onChange={handleChange("academicYear")}
             className="form-control"
           >
-            {/* {acedemic()} */}
             {academicOption}
           </select>
         </div>
@@ -1028,12 +393,11 @@ const Attendance = ({ history }) => {
             onChange={handleChange("studentDept")}
             className="form-control"
           >
-            <option selected>Choose...</option>
-            <option>CSE</option>
-            <option>EEE</option>
-            <option>ECE</option>
-            <option>Mech</option>
-            <option>BioMedical</option>
+            {labsDepartment.length > 0 ? (
+              optionsView(labsDepartment)
+            ) : (
+              <option>No Labs</option>
+            )}
           </select>
         </div>
         <div className="form-group col-md-2">
@@ -1060,7 +424,11 @@ const Attendance = ({ history }) => {
             onChange={handleChange("studentName")}
             className="form-control"
           >
-            {studentOption}
+            {details.length > 0 ? (
+              details.map((el) => <option key={el}>{el.name}</option>)
+            ) : (
+              <option>No Student Loaded</option>
+            )}
           </select>
         </div>
         <div className="form-group col-md-2 p-3">

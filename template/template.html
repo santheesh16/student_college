@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  
   <title>Document</title>
   <style>
     table {
@@ -55,11 +55,10 @@
         <th>Login Time</th>
         <th>Logout Time</th>
         <th>Machine No</th>
-        
       </tr>
     </thead>
     <tbody>
-
+      {{#each detail}}
       <tr>
         <td>{{this.id}}</td>
         <td>{{this.roll_number}}</td>
@@ -71,45 +70,7 @@
         <td>{{this.logouttime}}</td>
         <td>{{this.machine_no}}</td>
       </tr>
-      <tr>
-        <td>{{this.id}}</td>
-        <td>{{this.roll_number}}</td>
-        <td>{{this.name}}</td>
-        <td>{{this.department}}</td>
-        <td>{{this.lab_id}}</td>
-        <td>{{this.date}}</td>
-        <td>{{this.logintime}}</td>
-        <td>{{this.logouttime}}</td>
-        <td>{{this.machine_no}}</td>
-      </tr>
-      <tr>
-        <td>{{this.id}}</td>
-        <td>{{this.roll_number}}</td>
-        <td>{{this.name}}</td>
-        <td>{{this.department}}</td>
-        <td>{{this.lab_id}}</td>
-        <td>{{this.date}}</td>
-        <td>{{this.logintime}}</td>
-        <td>{{this.logouttime}}</td>
-        <td>{{this.machine_no}}</td>
-      </tr>
-      <tr>
-        <td>{{this.id}}</td>
-        <td>{{this.roll_number}}</td>
-        <td>{{this.name}}</td>
-        <td>{{this.department}}</td>
-        <td>{{this.lab_id}}</td>
-        <td>{{this.date}}</td>
-        <td>{{this.logintime}}</td>
-        <td>{{this.logouttime}}</td>
-        <td>{{this.machine_no}}</td>
-      </tr>
-      <tr>
-        <td></td>
-        <td></td>
-        <td>Total No of Students</td>
-        <td>{{this.roll_number}}</td>
-      </tr>
+      {{/each}}
     </tbody>
   </table>
   </div>
