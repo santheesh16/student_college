@@ -24,7 +24,7 @@ const Signin = ({ history }) => {
     event.preventDefault();
     setValues({ ...values, buttonText: "Submitting" });
 
-    Axios.post("http://localhost:8000/api/signin", {
+    Axios.post("/api/signin", {
       roll_number : roll_number ,
       password : password
     })

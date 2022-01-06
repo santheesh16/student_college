@@ -28,7 +28,7 @@ const LabDetails = ({ history }) => {
     console.log(disabled);
     axios({
       method: "GET",
-      url: "http://localhost:8000/api/lab/load-details/all",
+      url: "/api/lab/load-details/all",
       headers: {
         Authorization: `Bearer ${getCookie("token")}`,
       },
@@ -57,7 +57,7 @@ const LabDetails = ({ history }) => {
     event.preventDefault();
     axios({
       method: "POST",
-      url: "http://localhost:8000/api/lab/add",
+      url: "/api/lab/add",
       data: {
         labId,
         labName,
@@ -87,7 +87,7 @@ const LabDetails = ({ history }) => {
     event.preventDefault();
     axios({
       method: "PUT",
-      url: `http://localhost:8000/api/lab/update`,
+      url: `/api/lab/update`,
       data: {
         labId: editFormData.labId,
         labName: editFormData.labName,
@@ -110,7 +110,7 @@ const LabDetails = ({ history }) => {
     event.preventDefault();
     axios({
       method: "DELETE",
-      url: `http://localhost:8000/api/lab/delete/${lab_id}`
+      url: `/api/lab/delete/${lab_id}`
     })
       .then((response) => {
         console.log("ADDLAB SUCCESS", response);

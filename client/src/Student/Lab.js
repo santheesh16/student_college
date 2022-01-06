@@ -72,7 +72,7 @@ const Lab = ({ history }) => {
     setValues({ ...values, buttonText: "Submitting" });
     axios({
       method: "PUT",
-      url: `http://localhost:8000/api/user/lab/${isStudlog().roll_number}`,
+      url: `/api/user/lab/${isStudlog().roll_number}`,
       headers: {
         Authorization: `Bearer ${getCookie("token")}`,
       },

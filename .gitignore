@@ -3,10 +3,10 @@
 /node_modules
 /.pnp
 .pnp.js
-
+/.env
 # testing
 /coverage
-
+/client/build
 # misc
 .DS_Store
 .env.local

@@ -55,7 +55,7 @@ const Signup = () => {
     var data = new FormData();
     data.append("file", file);
 
-    Axios.post("http://localhost:8000/api/upload/excel", data)
+    Axios.post("/api/upload/excel", data)
       .then((response) => {
         console.log("FILE SUCCESS", response);
         toast.success(response.data.message);
@@ -71,7 +71,7 @@ const Signup = () => {
     setValues({ ...values, buttonText: "Submitting" });
     Axios({
       method: "POST",
-      url: "http://localhost:8000/api/signup",
+      url: "/api/signup",
       data: {
         rollNumber,
         registerNumber,

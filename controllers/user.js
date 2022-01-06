@@ -2,12 +2,13 @@ const connection = require("../config/config.js");
 require("dotenv").config();
 const bcrypt = require("bcrypt");
 const excel = require("exceljs");
+let Query = require("../constant");
 
 //Student Profile Read
 exports.read = (req, res) => {
   const userId = req.params.rollNumber;
   connection.query(
-    "SELECT * FROM student WHERE roll_number = ?;",
+    Query.GET_STUDENT,
     userId,
     function (error, user, fields) {
       if (error || user.length === 0) {
@@ -35,7 +36,7 @@ exports.update = (req, res) => {
   } = req.body;
   const studRollNumber = req.user.rollNumber;
   connection.query(
-    "SELECT * FROM student WHERE roll_number = ?;",
+    Query.GET_STUDENT,
     studRollNumber,
     function (error, user, fields) {
       if (error || user[0].id === 0) {
@@ -66,7 +67,7 @@ exports.update = (req, res) => {
       user[0].batch = batch;
 
       connection.query(
-        "UPDATE student SET ? WHERE roll_number = ? ;",
+        Query.UPDATE_STUDENT,
         [user[0], studRollNumber],
         function (error, user, fields) {
           if (error) {
@@ -87,7 +88,7 @@ exports.labUpdate = (req, res) => {
   const roll_number = req.params.roll_number;
   const { lab_name, lab_department, machine_no } = req.body;
   connection.query(
-    "SELECT lab_id FROM lab_details WHERE  lab_name = ? AND lab_department = ?;",
+    Query.GET_LAB_ID,
     [lab_name, lab_department],
     function (error, user, fields) {
       console.log(user);
@@ -99,7 +100,7 @@ exports.labUpdate = (req, res) => {
       } else {
         if (user.length > 0) {
           connection.query(
-            "UPDATE attendances SET lab_id = ? , machine_no = ? WHERE roll_number = ? ;",
+            Query.UPDATE_ATTENDANCE,
             [user[0].lab_id, machine_no, roll_number],
             function (error, update, fields) {
               if (error) {
@@ -128,7 +129,7 @@ exports.labUpdate = (req, res) => {
 exports.adminStudentRead = (req, res) => {
   const studentRoll = req.params.rollNumber;
   connection.query(
-    "SELECT * FROM students WHERE students.roll_number = ?;",
+    Query.GET_STUDENT,
     studentRoll,
     function (error, user, fields) {
       if (error || !user[0]) {
@@ -144,7 +145,7 @@ exports.adminStudentRead = (req, res) => {
 exports.adminRead = (req, res) => {
   const userId = req.params.id;
   connection.query(
-    "SELECT * FROM admin WHERE id = ?;",
+    Query.ADMIN_ID,
     userId,
     function (error, user, fields) {
       if (error || !user[0]) {
@@ -163,7 +164,7 @@ exports.adminUpdate = (req, res) => {
   const { oldPassword, newPassword } = req.body;
   const id = req.user.id;
   connection.query(
-    "SELECT * FROM admin WHERE admin.id = ?;",
+    Query.ADMIN_ID,
     id,
     function (error, user, fields) {
       if (error || user[0].id === 0) {
@@ -182,7 +183,7 @@ exports.adminUpdate = (req, res) => {
           if (comparision) {
             const password = bcrypt.hashSync(newPassword, 10);
             connection.query(
-              "UPDATE admin SET password = ? WHERE id = ? ;",
+              Query.UPDATE_ADMIN,
               [password, id],
               function (error, update, fields) {
                 if (error) {
@@ -219,7 +220,7 @@ exports.adminStudentUpdate = (req, res) => {
     req.body;
   const studrollNumber = req.params.rollNumber;
   connection.query(
-    "SELECT * FROM students WHERE roll_number = ?;",
+    Query.GET_STUDENT,
     studrollNumber,
     function (error, user, fields) {
       if (error || !user[0]) {
@@ -249,7 +250,7 @@ exports.adminStudentUpdate = (req, res) => {
       user[0].section = section;
       user[0].batch = batch;
       connection.query(
-        "UPDATE students SET ? WHERE roll_number = ? ;",
+        Query.UPDATE_STUDENT,
         [user[0], studrollNumber],
         function (error, user, fields) {
           if (error) {
@@ -272,7 +273,7 @@ exports.studentPasswordUpdate = (req, res) => {
   console.log(oldStudentPassword);
   console.log(newStudentPassword);
   connection.query(
-    "Select default (password) as defaultPass from students;",
+    Query.GET_STUDENT_DEAULT_PASSWORD,
     function (error, user, fields) {
       if (error || user.length == 0) {
         return res.status(400).json({
@@ -289,11 +290,11 @@ exports.studentPasswordUpdate = (req, res) => {
           if (comparision) {
             const password = bcrypt.hashSync(newStudentPassword, 10);
             connection.query(
-              "ALTER TABLE students ALTER password SET DEFAULT ?;",
+              Query.UPDATE_STUDENT_DEAULT_PASSWORD,
               [password],
               function (error, update, fields) {
                 if (error) {
-                  console.log("USER UPDATED ERROR", error);
+                  console.log("STUDENT UPDATED ERROR", error);
                   return res.status(400).json({
                     error: "User update failed",
                   });
@@ -323,7 +324,7 @@ exports.adminStduntDelete = (req, res) => {
   //console.log('UPDATE USER - req.user', req.user, 'UDATE DATA', req.body)
   const studentId = req.params.id;
   connection.query(
-    "DELETE FROM student WHERE id = ?;",
+    Query.DELETE_STUDENT,
     studentId,
     function (error, user, fields) {
       if (error) {
@@ -337,57 +338,12 @@ exports.adminStduntDelete = (req, res) => {
     }
   );
 };
-
-exports.excelFile = (req, res) => {
-  const { lab_name, lab_department } = req.body;
-  connection.query(
-    "SELECT id, roll_number, register_number, name, department, lab_name, lab_department, logintime, logouttime, machine_no FROM login_attendance AS la INNER JOIN lab_details AS ld ON  la.lab_id = ld.lab_id WHERE ld.lab_name = ? AND ld.lab_department = ?;",
-    [lab_name, lab_department],
-    function (error, user, fields) {
-      const labAttendance = JSON.parse(JSON.stringify(user));
-      console.log(labAttendance);
-
-      let workbook = new excel.Workbook(); //creating workbook
-      let worksheet = workbook.addWorksheet("Lab Attendance"); //creating worksheet
-
-      //  WorkSheet Header
-      worksheet.columns = [
-        { header: "Id", key: "id", width: 5 },
-        { header: "Roll No", key: "roll_number", width: 15 },
-        { header: "Register No", key: "register_number", width: 15 },
-        { header: "Name", key: "name", width: 15 },
-        { header: "Department", key: "department", width: 10 },
-        { header: "Lab Name", key: "lab_name", width: 15 },
-        { header: "Lab Deparment", key: "lab_department", width: 10 },
-        { header: "Login Time", key: "logintime", width: 20 },
-        { header: "Logout Time", key: "logouttime", width: 20 },
-        { header: "Machine no", key: "machine_no", width: 5, outlineLevel: 1 },
-      ];
-      //  , outlineLevel: 1
-      // Add Array Rows
-      worksheet.addRows(labAttendance);
-      res.setHeader(
-        "Content-Type",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-      );
-      res.setHeader(
-        "Content-Disposition",
-        "attachment; filename = " + "Lab Attendance.xlsx"
-      );
-
-      return workbook.xlsx.write(res).then(function () {
-        res.status(200).end();
-      });
-    }
-  );
-};
-
 // Student Block
 exports.studentBlock = (req, res) => {
   const roll_number = req.body.rollNumber;
   console.log(roll_number);
   connection.query(
-    "UPDATE students SET students.status = 0 WHERE students.roll_number = ?;",
+    Query.UPDATE_BLOCK_STUDENT,
     [roll_number],
     function (error, user, fields) {
       if (error) {
@@ -408,7 +364,7 @@ exports.studentUnBlock = (req, res) => {
   const roll_number = req.body.rollNumber;
   console.log(roll_number);
   connection.query(
-    "UPDATE students SET students.status = 1 WHERE students.roll_number = ?;",
+    Query.UPDATE_UNBLOCK_STUDENT,
     [roll_number],
     function (error, user, fields) {
       if (error) {
@@ -426,7 +382,7 @@ exports.studentUnBlock = (req, res) => {
 
 exports.blockList = (req, res) => {
   connection.query(
-    "SELECT students.roll_number FROM students WHERE students.status = 0;",
+    Query.GET_BLOCKED_STUDENT,
     function (error, user, fields) {
       if (error || !user) {
         return res.status(400).json({

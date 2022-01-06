@@ -26,7 +26,7 @@ const Block = ({ history }) => {
     setValues({ ...values, buttonUnblock: "Unblocking" });
     axios({
       method: "PUT",
-      url: "http://localhost:8000/api/admin/student/unblock",
+      url: "/api/admin/student/unblock",
       headers: {
         Authorization: `Bearer ${getCookie("token")}`,
       },
@@ -59,7 +59,7 @@ const Block = ({ history }) => {
     event.preventDefault();
     axios({
       method: "DELETE",
-      url: "http://localhost:8000/api/lab/delete/:labId"
+      url: "/api/lab/delete/:labId"
     })
       .then((response) => {
         console.log("ADDLAB SUCCESS", response);
@@ -84,7 +84,7 @@ const Block = ({ history }) => {
     setValues({ ...values, buttonText: "Blocking" });
     axios({
       method: "PUT",
-      url: "http://localhost:8000/api/admin/student/block",
+      url: "/api/admin/student/block",
       headers: {
         Authorization: `Bearer ${getCookie("token")}`,
       },
@@ -120,7 +120,7 @@ const Block = ({ history }) => {
   const loadBlock = () => {
     axios({
       method: "GET",
-      url: "http://localhost:8000/api/admin/student/block-list",
+      url: "/api/admin/student/block-list",
       headers: {
         Authorization: `Bearer ${getCookie("token")}`,
       },

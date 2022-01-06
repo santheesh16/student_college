@@ -27,7 +27,7 @@ const AdminReset = ({ history }) => {
     const loadProfile = () => {
         axios({
             method: 'GET',
-            url: `http://localhost:8000/api/admin/${isAuth().id}`,
+            url: `/api/admin/${isAuth().id}`,
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -59,7 +59,7 @@ const AdminReset = ({ history }) => {
         setValues({ ...values, buttonText: 'Submitting' });
         axios({
             method: 'PUT',
-            url: `http://localhost:8000/api/admin/adminUpdate`,
+            url: `/api/admin/adminUpdate`,
             headers: {
                 Authorization: `Bearer ${token}`
             },

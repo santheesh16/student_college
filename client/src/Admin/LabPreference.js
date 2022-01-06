@@ -27,7 +27,7 @@ const LabPreference = ({ history }) => {
     event.preventDefault();
     setValues({ ...values, buttonText: "Submitting" });
     console.log(oldStudentPassword, newStudentPassword)
-    axios.put('http://localhost:8000/api/admin/student/passwordUpdate',
+    axios.put('/api/admin/student/passwordUpdate',
     {oldStudentPassword, newStudentPassword},{
     headers: {
       Authorization: `Bearer ${token}`,

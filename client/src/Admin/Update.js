@@ -65,7 +65,7 @@ const Update = ({ history }) => {
     event.preventDefault();
     var data = new FormData();
     data.append("file", file);
-    Axios.post("http://localhost:8000/api/upload/excelUpdate", data)
+    Axios.post("/api/upload/excelUpdate", data)
       .then((response) => {
         console.log("FILE SUCCESS", response);
         toast.success("File Uploaded Successfully");
@@ -84,7 +84,7 @@ const Update = ({ history }) => {
     event.preventDefault();
     Axios({
       method: "GET",
-      url: `http://localhost:8000/api/admin/user/${search_roll}`,
+      url: `/api/admin/user/${search_roll}`,
       headers: {
         Authorization: `Bearer ${getCookie("token")}`,
       },
@@ -133,7 +133,7 @@ const Update = ({ history }) => {
     setValues({ ...values, buttonText: "Updatting" });
     Axios({
       method: "PUT",
-      url: `http://localhost:8000/api/admin/user/update/${isStud().roll_number}`,
+      url: `/api/admin/user/update/${isStud().roll_number}`,
       headers: {
         Authorization: `Bearer ${getCookie("token")}`,
       },

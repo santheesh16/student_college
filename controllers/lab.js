@@ -15,7 +15,7 @@ exports.viewStudentAttendance = (req, res) => {
   const studentDept =  '%'+details.studentDept+'%';
   const section = '%'+details.section+'%';
   const studentName = '%'+details.studentName+'%';
-
+  
   connection.query(
     Query.ATTENDANCE_DETAIL,
     [
@@ -72,9 +72,10 @@ exports.viewLabName = (req, res) => {
 
 exports.viewLabDetails = (req, res) => {
   connection.query(
-    Query.GET_LAB_DETAILS,
+    Query.GET_LABS_DETAILS,
     function (error, user, fields) {
       if (error) {
+        console.log("GET LAB DETAILS",error)
         return res.status(400).json({
           error: "Failed to get Student details",
         });

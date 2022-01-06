@@ -44,7 +44,7 @@ const Layout = ({ children, match, history }) => {
       event.preventDefault();
       axios({
         method: "PUT",
-        url: `http://localhost:8000/api/user/student/signout/${
+        url: `/api/user/student/signout/${
           isStudlog().roll_number
         }`,
       })

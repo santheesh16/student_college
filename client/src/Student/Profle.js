@@ -26,7 +26,7 @@ const Private = ({ history }) => {
     const loadProfile = () => {
         axios({
             method: 'GET',
-            url: `http://localhost:8000/api/user/${isStudlog().roll_number}`,
+            url: `/api/user/${isStudlog().roll_number}`,
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -58,7 +58,7 @@ const Private = ({ history }) => {
         setValues({ ...values, buttonText: 'Submitting' });
         axios({
             method: 'PUT',
-            url: "http://localhost:8000/api/user/update",
+            url: "/api/user/update",
             headers: {
                 Authorization: `Bearer ${token}`
             },

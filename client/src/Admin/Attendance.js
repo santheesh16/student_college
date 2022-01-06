@@ -49,7 +49,7 @@ const Attendance = ({ history }) => {
       minusYear += 1;
     }
 
-    batchOption = optionsView( batchOptions);
+    batchOption = batchOptions.map((el) => <option key={el}>{el}</option>);
 
     var academicOptions = ["Choose..."];
 
@@ -64,7 +64,9 @@ const Attendance = ({ history }) => {
         j++;
       }
     }
-    academicOption = optionsView(academicOptions);
+    academicOption = academicOptions.map((el) => (
+      <option key={el}>{el}</option>
+    ));
   };
 
   const {
@@ -91,7 +93,7 @@ const Attendance = ({ history }) => {
   const loadBlock = () => {
     Axios({
       method: "GET",
-      url: "http://localhost:8000/api/lab/load-details/all",
+      url: "/api/lab/load-details/all",
       headers: {
         Authorization: `Bearer ${getCookie("token")}`,
       },
@@ -149,7 +151,7 @@ const Attendance = ({ history }) => {
     event.preventDefault();
     Axios({
       method: "POST",
-      url: `http://localhost:8000/api/attendance/load-details`,
+      url: `/api/attendance/load-details`,
       data,
       headers: {
         "Content-Type": "application/json",
@@ -187,13 +189,13 @@ const Attendance = ({ history }) => {
       studentName: studentName,
     };
     const data = JSON.stringify({ searchColumns: searchAttendance });
-    Axios.post(`http://localhost:8000/api/attendance/pdf`, data, {
+    Axios.post(`/api/attendance/pdf`, data, {
       headers: {
         "Content-Type": "application/json",
       },
     })
       .then((response) => {
-        Axios.get(`http://localhost:8000/api/attendance/pdf/download`, {
+        Axios.get(`/api/attendance/pdf/download`, {
           responseType: "blob",
         })
           .then((response) => {
@@ -233,7 +235,7 @@ const Attendance = ({ history }) => {
       studentName: studentName,
     };
     const data = JSON.stringify({ searchColumns: searchAttendance });
-    Axios.post(`http://localhost:8000/api/attendance/excel`, data, {
+    Axios.post(`/api/attendance/excel`, data, {
       responseType: "arraybuffer",
       headers: {
         "Content-Type": "application/json",
@@ -322,7 +324,7 @@ const Attendance = ({ history }) => {
             value={labName}
             className="form-control"
           >
-            {labNames.length > 0 ? (
+            {labDepartment.length > 0 ? (
               optionsView(labNames[labsDepartment.indexOf(labDepartment)])
             ) : (
               <option>Choose Dept</option>
