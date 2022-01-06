@@ -13,7 +13,7 @@
     "start": "nodemon server.js",
     "client": "cd client && npm install nodemon && npm start",
     "dev": "concurrently -n 'server,client' -c 'red,green'  \"nodemon server.js\" \"npm run client\"",
-    "heroku-postbuild": "npm run install-client && npm run build --prefix client"
+    "heroku-postbuild": "npm install nodemon && npm run install-client && npm run build --prefix client"
   },
   "author": "",
   "license": "ISC",
