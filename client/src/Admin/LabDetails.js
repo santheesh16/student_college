@@ -91,7 +91,7 @@ const LabDetails = ({ history }) => {
       .then((response) => {
         console.log("ADDLAB SUCCESS", response);
         toast.success(response.data.message);
-        window.location.reload(false);
+        
       })
       .catch((error) => {
         console.log("ADDLAB ERROR", error.response.data);
@@ -114,7 +114,7 @@ const LabDetails = ({ history }) => {
       .then((response) => {
         console.log("UPDATE LAB SUCCESS", response);
         toast.success(response.data.message);
-        window.location.reload(false);
+        
       })
       .catch((error) => {
         console.log("UPDATE LAB ERROR", error.response.data);
@@ -131,7 +131,7 @@ const LabDetails = ({ history }) => {
       .then((response) => {
         console.log("ADDLAB SUCCESS", response);
         toast.success(response.data.message);
-        window.location.reload(false);
+        
       })
       .catch((error) => {
         console.log("ADDLAB ERROR", error.response.data);
