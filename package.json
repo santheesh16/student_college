@@ -10,9 +10,9 @@
   "scripts": {
     "install-build": "cd client && npm run build",
     "install-client": "cd client && npm install",
-    "start": "nodemon server.js",
+    "start": "npx nodemon server.js",
     "client": "cd client && npm install nodemon && npm start",
-    "dev": "concurrently -n 'server,client' -c 'red,green'  \"nodemon server.js\" \"npm run client\"",
+    "start:dev": "concurrently -n 'server,client' -c 'red,green'  \"nodemon server.js\" \"npm run client\"",
     "heroku-postbuild": "npm install nodemon && npm run install-client && npm run build --prefix client"
   },
   "author": "",
