@@ -92,7 +92,7 @@ const Attendance = ({ history }) => {
 
   const loadBlock = () => {
     Axios({
-      method: "GET",
+      method: "POST",
       url: "/api/lab/load-details/all",
       headers: {
         Authorization: `Bearer ${getCookie("token")}`,
