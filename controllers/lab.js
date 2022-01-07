@@ -85,7 +85,7 @@ exports.viewLabDetails = (req, res) => {
           error: "No data Found",
         });
       } else {
-        return res.json(user[0]);
+        return res.json(user);
       }
     }
   );
