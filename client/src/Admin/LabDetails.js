@@ -4,24 +4,25 @@ import axios from "axios";
 import { getCookie, signout, setLocalStorage } from "../auth/helpers";
 import { ToastContainer, toast } from "react-toastify";
 import "../../node_modules/react-toastify/dist/ReactToastify.min.css";
-import ReadOnlyRow from "./Lab/ReadOnlyRow";
-import EditableRow from "./Lab/EditableRow";
-import ".././App.css"
+import ".././App.css";
 
 const LabDetails = ({ history }) => {
+  
   const [contacts, setContacts] = useState([]);
   const [addFormData, setAddFormData] = useState({
     labId: "",
     labName: "",
     labDept: "",
+    currentLab: Boolean(),
   });
 
   const [editFormData, setEditFormData] = useState({
     labId: "",
     labName: "",
     labDept: "",
-    currentLab: ""
+    currentLab: Boolean(),
   });
+  const { currentLab } = editFormData;
 
   const [editContactId, setEditContactId] = useState(null);
 
@@ -33,7 +34,6 @@ const LabDetails = ({ history }) => {
 
     const newFormData = { ...addFormData };
     newFormData[fieldName] = fieldValue;
-
     setAddFormData(newFormData);
   };
 
@@ -41,7 +41,7 @@ const LabDetails = ({ history }) => {
     loadBlock();
   }, []);
 
-  const loadBlock = () => {
+  function loadBlock() {
     axios({
       method: "POST",
       url: "/api/lab/load-details/all",
@@ -52,8 +52,19 @@ const LabDetails = ({ history }) => {
       .then((response) => {
         console.log("PRIVATE PROFILE UPDATE", response.data);
         setLocalStorage("labs", response.data);
-        setContacts(...contacts, response.data)
-        
+        let labsData = response.data;
+        let labsArray = [];
+
+        for (let index = 0; index < labsData.length; index++) {
+          let lab = {
+            labId: labsData[index].lab_id,
+            labName: labsData[index].lab_name,
+            labDept: labsData[index].lab_department,
+            currentLab: Boolean(labsData[index].current_lab),
+          };
+          labsArray.push(lab);
+        }
+        setContacts(...contacts, labsArray);
       })
       .catch((error) => {
         console.log("PRIVATE PROFILE UPDATE ERROR", error.response.data.error);
@@ -63,7 +74,7 @@ const LabDetails = ({ history }) => {
           });
         }
       });
-  };
+  }
 
   const handleAddFormSubmit = (event) => {
     event.preventDefault();
@@ -74,12 +85,13 @@ const LabDetails = ({ history }) => {
         labId: addFormData.labId,
         labName: addFormData.labName,
         labDept: addFormData.labDept,
-      }
+        currentLab: addFormData.currentLab,
+      },
     })
       .then((response) => {
         console.log("ADDLAB SUCCESS", response);
         toast.success(response.data.message);
-        
+        window.location.reload(false);
       })
       .catch((error) => {
         console.log("ADDLAB ERROR", error.response.data);
@@ -87,7 +99,6 @@ const LabDetails = ({ history }) => {
       });
   };
 
-  
   const handleEditFormSubmit = (event) => {
     event.preventDefault();
     axios({
@@ -97,30 +108,30 @@ const LabDetails = ({ history }) => {
         labId: editFormData.labId,
         labName: editFormData.labName,
         labDept: editFormData.labDept,
-        currentLab: editFormData.currentLab
-      }
+        currentLab: editFormData.currentLab,
+      },
     })
       .then((response) => {
         console.log("UPDATE LAB SUCCESS", response);
         toast.success(response.data.message);
-        
+        window.location.reload(false);
       })
       .catch((error) => {
         console.log("UPDATE LAB ERROR", error.response.data);
         toast.error(error.response.data.error);
       });
-  }
+  };
 
-  const clickDelete = (event, lab_id) => {
+  const clickDelete = (event, labId) => {
     event.preventDefault();
     axios({
       method: "DELETE",
-      url: `/api/lab/delete/${lab_id}`,
+      url: `/api/lab/delete/${labId}`,
     })
       .then((response) => {
         console.log("ADDLAB SUCCESS", response);
         toast.success(response.data.message);
-        window.location.reload();
+        window.location.reload(false);
       })
       .catch((error) => {
         console.log("ADDLAB ERROR", error.response.data);
@@ -132,19 +143,11 @@ const LabDetails = ({ history }) => {
     event.preventDefault();
     const fieldName = event.target.getAttribute("name");
     var fieldValue = event.target.value;
-    if(fieldName === "currentLab"){
-      console.log(fieldValue)
-      if(fieldValue === 0){
-        fieldValue = 1;
-      }else{
-        fieldValue = 0;
-      }
-    }
+
+    console.log(fieldName, fieldValue);
     const newFormData = { ...editFormData };
     newFormData[fieldName] = fieldValue;
-    console.log(newFormData[fieldName], 'sample');
     setEditFormData(newFormData);
-
   };
 
   const handleCancelClick = () => {
@@ -153,19 +156,113 @@ const LabDetails = ({ history }) => {
 
   const handleEditClick = (event, contact) => {
     event.preventDefault();
-    setEditContactId(contact.lab_id);
+    setEditContactId(contact.labId);
     const formValues = {
-      labId: contact.lab_id,
-      labName: contact.lab_name,
-      labDept: contact.lab_department,
-      currentLab: contact.current_lab,
+      labId: contact.labId,
+      labName: contact.labName,
+      labDept: contact.labDept,
+      currentLab: contact.currentLab,
     };
     setEditFormData(formValues);
   };
 
-  const handleDeleteClick = (event ,contactId) => {
-    const index = contacts.findIndex((contact) => contact.lab_id === contactId);
-    clickDelete(event ,index+1);
+  const handleDeleteClick = (event, contactId) => {
+    const index = contacts.findIndex((contact) => contact.labId === contactId);
+    clickDelete(event, index + 1);
+  };
+
+  const editTableRow = (editFormData) => {
+    return (
+      <tr>
+        <td>
+          <input
+            type="radio"
+            name="currentLab"
+            value={editFormData.currentLab}
+            onChange={() =>
+              setEditFormData({
+                ...editFormData,
+                currentLab: !editFormData.currentLab,
+              })
+            }
+            checked={currentLab}
+          />
+        </td>
+        <td>
+          <input
+            type="text"
+            name="labId"
+            value={editFormData.labId}
+            onChange={handleEditFormChange}
+          />
+        </td>
+        <td>
+          <input
+            type="text"
+            name="labName"
+            value={editFormData.labName}
+            onChange={handleEditFormChange}
+          />
+        </td>
+        <td>
+          <input
+            type="text"
+            name="labDept"
+            value={editFormData.labDept}
+            onChange={handleEditFormChange}
+          />
+        </td>
+        <td>
+          <button
+            className="btn btn-primary"
+            onClick={handleEditFormSubmit}
+            type="submit"
+          >
+            Save
+          </button>
+        </td>
+        <td>
+          <button
+            className="btn btn-primary"
+            type="button"
+            onClick={handleCancelClick}
+          >
+            Cancel
+          </button>
+        </td>
+      </tr>
+    );
+  };
+
+  const readOnlyRow = (contact) => {
+    return (
+      <tr>
+        <td>
+          <input type="radio" checked={contact.currentLab} />
+        </td>
+        <td>{contact.labId}</td>
+        <td>{contact.labName}</td>
+        <td>{contact.labDept}</td>
+        <td>
+          <button
+            className="btn btn-primary"
+            type="button"
+            onClick={(event) => handleEditClick(event, contact)}
+          >
+            Edit
+          </button>
+        </td>
+        <td>
+          <button
+            className="btn btn-primary"
+            type="button"
+            onClick={(event) => handleDeleteClick(event, contact.labId)}
+          >
+            Delete
+          </button>
+        </td>
+      </tr>
+    );
   };
 
   const labDetails = () => {
@@ -186,31 +283,15 @@ const LabDetails = ({ history }) => {
           </thead>
           {contacts.map((contact) => (
             <Fragment>
-              {editContactId === contact.lab_id ? (
-                <EditableRow
-                  editFormData={editFormData}
-                  setEditFormData={setEditFormData}
-                  handleEditFormChange={handleEditFormChange}
-                  handleCancelClick={handleCancelClick}
-                  handleEditFormSubmit={handleEditFormSubmit}
-                />
-              ) : (
-                <ReadOnlyRow
-                  contact={contact}
-                  handleEditClick={handleEditClick}
-                  handleDeleteClick={handleDeleteClick}
-                />
-              )}
+              {editContactId === contact.labId
+                ? editTableRow(editFormData)
+                : readOnlyRow(contact)}
             </Fragment>
           ))}
           <tr>
             <td></td>
             <td>
-              <input
-                type="text"
-                name="labId"
-                onChange={handleAddFormChange}
-              />
+              <input type="text" name="labId" onChange={handleAddFormChange} />
             </td>
             <td>
               <input
@@ -229,7 +310,8 @@ const LabDetails = ({ history }) => {
             <td
               colSpan="2"
               onClick={handleAddFormSubmit}
-              style={{ textAlign: "center" }}>
+              style={{ textAlign: "center" }}
+            >
               <button className="btn btn-primary">Add</button>
             </td>
           </tr>
@@ -282,7 +364,10 @@ const LabDetails = ({ history }) => {
             </td>
             <td
               colSpan="2"
-              onClick={handleAddFormSubmit}
+              onClick={() => {
+                handleAddFormSubmit();
+                loadBlock();
+              }}
               style={{ textAlign: "center" }}
             >
               <button className="btn btn-primary">Add</button>
@@ -297,8 +382,8 @@ const LabDetails = ({ history }) => {
     <Layout>
       <div className="lab-details">
         <ToastContainer />
-        
-        {contacts.length > 0 ? labDetails() :  addNewLabs()}
+
+        {contacts.length === 0 ?  addNewLabs() : labDetails()}
       </div>
     </Layout>
   );

@@ -97,7 +97,7 @@ exports.addLab = (req, res) => {
     lab_id: req.body.labId,
     lab_name: req.body.labName,
     lab_department: req.body.labDept,
-    current_lab: 0
+    current_lab: req.body.currentLab
   }
   connection.query(
     Query.ADD_LAB_DETAILS, lab,
