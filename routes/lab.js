@@ -12,7 +12,7 @@ const {
 
 
 router.post("/attendance/load-details", viewStudentAttendance)
-router.get("/lab/load-details/all", viewLabDetails);
+router.post("/lab/load-details/all", viewLabDetails);
 router.post("/lab/add", addLab);
 router.put("/lab/update", updateLab);
 router.delete("/lab/delete/:lab_id", deleteLab);

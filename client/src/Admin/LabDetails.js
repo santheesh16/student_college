@@ -43,11 +43,8 @@ const LabDetails = ({ history }) => {
 
   const loadBlock = () => {
     axios({
-      method: "GET",
-      url: "/api/lab/load-details/all",
-      headers: {
-        Authorization: `Bearer ${getCookie("token")}`,
-      },
+      method: "POST",
+      url: "/api/lab/load-details/all",      
     })
       .then((response) => {
         console.log("PRIVATE PROFILE UPDATE", response.data);

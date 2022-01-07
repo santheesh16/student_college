@@ -38,4 +38,4 @@ if(process.env.NODE_ENV === 'production'){
 }
 
 app.listen(PORT, console.log(`Server is starting at ${PORT}`));
-//mysql -h mysql–instance1.123456789012.us-east-1.rds.amazonaws.com -P 3306 -u mymasteruser -p
+//mysql -h mysql-rds-kpr.ch0x6mbxcvn8.ap-south-1.rds.amazonaws.com -P 3306 -u admin -p
