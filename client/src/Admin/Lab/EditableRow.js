@@ -13,7 +13,7 @@ const EditableRow = ({
         <input
           type="radio"
           name="currentLab"
-          checked={editFormData.currentLab == 1 ? false : true}
+          checked={editFormData.currentLab === 1 ? false : true}
           value={editFormData.currentLab}
           onChange={(event) => {
             const fieldName = event.target.getAttribute("name");

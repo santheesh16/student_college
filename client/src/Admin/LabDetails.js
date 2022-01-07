@@ -44,7 +44,10 @@ const LabDetails = ({ history }) => {
   const loadBlock = () => {
     axios({
       method: "POST",
-      url: "/api/lab/load-details/all",      
+      url: "/api/lab/load-details/all",
+      headers: {
+        Authorization: `Bearer ${getCookie("token")}`,
+      },
     })
       .then((response) => {
         console.log("PRIVATE PROFILE UPDATE", response.data);
@@ -76,7 +79,6 @@ const LabDetails = ({ history }) => {
       .then((response) => {
         console.log("ADDLAB SUCCESS", response);
         toast.success(response.data.message);
-        loadBlock();
         window.location.reload();
       })
       .catch((error) => {
@@ -100,7 +102,6 @@ const LabDetails = ({ history }) => {
     })
       .then((response) => {
         console.log("UPDATE LAB SUCCESS", response);
-        loadBlock();
         toast.success(response.data.message);
         window.location.reload();
       })
@@ -119,7 +120,6 @@ const LabDetails = ({ history }) => {
       .then((response) => {
         console.log("ADDLAB SUCCESS", response);
         toast.success(response.data.message);
-        loadBlock();
         window.location.reload();
       })
       .catch((error) => {
@@ -134,7 +134,7 @@ const LabDetails = ({ history }) => {
     var fieldValue = event.target.value;
     if(fieldName === "currentLab"){
       console.log(fieldValue)
-      if(fieldValue == 0){
+      if(fieldValue === 0){
         fieldValue = 1;
       }else{
         fieldValue = 0;
@@ -186,7 +186,7 @@ const LabDetails = ({ history }) => {
           </thead>
           {contacts.map((contact) => (
             <Fragment>
-              {editContactId == contact.lab_id ? (
+              {editContactId === contact.lab_id ? (
                 <EditableRow
                   editFormData={editFormData}
                   setEditFormData={setEditFormData}

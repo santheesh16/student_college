@@ -4,7 +4,7 @@ const ReadOnlyRow = ({ contact, handleEditClick, handleDeleteClick }) => {
   return (
     <tr>
       <td>
-        <input type="radio" checked={contact.current_lab == 1} />
+        <input type="radio" checked={contact.current_lab === 1} />
       </td>
       <td>{contact.lab_id}</td>
       <td>{contact.lab_name}</td>

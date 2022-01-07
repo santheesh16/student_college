@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../components/Navbar";
-import { getCookie, signout, setLocalStorage } from "../auth/helpers";
+import { getCookie, signout } from "../auth/helpers";
 import Axios from "axios";
 import "../App.css";
 import { ToastContainer, toast } from "react-toastify";
@@ -101,11 +101,11 @@ const Attendance = ({ history }) => {
       .then((response) => {
         console.log("GET LAB SUCCESS", response.data);
         let labDetails = response.data
-        for (var i = 0; i < response.data.length; i++) {
+        for (let i = 0; i < response.data.length; i++) {
           labsDepartment.push(response.data[i].lab_department);
         }
         let dept = [];
-        for (var i = 0, l = labsDepartment.length; i < l; i++) {
+        for (let i = 0, l = labsDepartment.length; i < l; i++) {
           if (
             dept.indexOf(labsDepartment[i]) === -1 &&
             labsDepartment[i] !== ""
@@ -116,7 +116,7 @@ const Attendance = ({ history }) => {
         setValues({ ...values, labsDepartment: dept});
         let names = ["Choose Dept"]
         labNames.push(names)
-        for (var i = 1; i < dept.length; i++) {
+        for (let i = 1; i < dept.length; i++) {
           names = []
           for (var j = 0; j < labDetails.length; j++) {
             if(dept[i] === labDetails[j].lab_department){

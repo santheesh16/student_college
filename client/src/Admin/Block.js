@@ -55,30 +55,6 @@ const Block = ({ history }) => {
       });
   };
 
-  const clickDelete = (event) => {
-    event.preventDefault();
-    axios({
-      method: "DELETE",
-      url: "/api/lab/delete/:labId"
-    })
-      .then((response) => {
-        console.log("ADDLAB SUCCESS", response);
-        setValues({
-          ...values,
-          labId: "",
-          labName: "",
-          labDept: "",
-
-        });
-        toast.success(response.data.message);
-      })
-      .catch((error) => {
-        console.log("ADDLAB ERROR", error.response.data);
-        setValues({ ...values, buttonText: "Add" });
-        toast.error(error.response.data.error);
-      });
-  }
-
   const clickBlockSubmit = (event) => {
     event.preventDefault();
     setValues({ ...values, buttonText: "Blocking" });
