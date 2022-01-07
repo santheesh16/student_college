@@ -21,62 +21,88 @@ connection.connect(function (err) {
   if (!err) {
     connection.query(Query.CREATE_IF_NOT_EXIST_DB, (error, db) => {
       if (db.warningCount == 1) {
-        console.log(db.warningCount);
-        console.log("DB is connected & exists");
+        console.log("DB is connected ");
       }
       connection.query(Query.CREATE_IF_NOT_EXIST_ADMIN_TABLE, (error, res) => {
-        if (!error) {
-          console.log("Admin created");
+        if (!error && res.warningCount == 1) {
+          console.log("Admin Table exists");
+          const defalutAdmin = "18st100";
           connection.query(
-            Query.CREATE_IF_NOT_EXIST_ATTENDANCE_TABLE,
+            Query.GET_DEFAULT_ADMIN,
+            defalutAdmin,
             (error, res) => {
-              if (!error) {
-                console.log("Attendance created");
+              if (res.length === 0) {
                 let admin = {
                   name: "Murugan",
-                  roll_number: "18st100",
+                  roll_number: defalutAdmin,
                   password:
                     "$2b$10$fzU2buOImREC9Fmk23k6berxF9z./yBBhWXhkZeqh8Etn6V0yK1Ga",
                 };
-                connection.query(
-                  Query.ADD_ADMIN,
-                  admin,
-                  (error, res) => {
-                    if (!error) {
-                      console.log("Admin inserted");
-                      console.log(res);
-                    } else {
-                      console.log("Admin not inserted");
-                    }
+                connection.query(Query.ADD_ADMIN, admin, (error, res) => {
+                  if (!error) {
+                    console.log("Admin inserted");
+                  } else {
+                    console.log("Admin not inserted");
                   }
-                );
+                });
               } else {
-                console.log("Attendance table not able to create");
+                console.log("Admin already exist");
               }
-            }
-          );
+            });
         } else {
-          console.log("Admin table not able to create");
+          console.log("Admin Table created", res);
+          const defalutAdmin = "18st100";
+          connection.query(
+            Query.GET_DEFAULT_ADMIN,
+            defalutAdmin,
+            (error, res) => {
+              if (res.length === 0) {
+                let admin = {
+                  name: "Murugan",
+                  roll_number: defalutAdmin,
+                  password:
+                    "$2b$10$fzU2buOImREC9Fmk23k6berxF9z./yBBhWXhkZeqh8Etn6V0yK1Ga",
+                };
+                connection.query(Query.ADD_ADMIN, admin, (error, res) => {
+                  if (!error) {
+                    console.log("Admin inserted");
+                  } else {
+                    console.log("Admin not inserted");
+                  }
+                });
+              } else {
+                console.log("Admin already exist");
+              }
+            });
         }
       });
       connection.query(
+        Query.CREATE_IF_NOT_EXIST_ATTENDANCE_TABLE,
+        (error, res) => {
+          if (!error && res.warningCount == 1) {
+            console.log("Attendance Table exists");
+          } else {
+            console.log("Attendance Table Created", res);
+          }
+        }
+      );
+      connection.query(
         Query.CREATE_IF_NOT_EXIST_STUDENT_TABLE,
         (error, res) => {
-          if (!error) {
-            console.log("Student created");
+          if (!error && res.warningCount == 1) {
+            console.log("Student Table exists");
           } else {
-            console.log("Student table not able to create");
+            console.log("Student Table created", res);
           }
-        });
-        connection.query(
-          Query.CREATE_IF_NOT_EXIST_LAB_TABLE,
-          (error, res) => {
-            if (!error) {
-              console.log("Lab created");
-            } else {
-              console.log("Lab table not able to create");
-            }
-          });
+        }
+      );
+      connection.query(Query.CREATE_IF_NOT_EXIST_LAB_TABLE, (error, res) => {
+        if (!error && res.warningCount == 1) {
+          console.log("Lab Table exists");
+        } else {
+          console.log("Lab Table created", res);
+        }
+      });
     });
   } else {
     console.log("Error while connecting with database");

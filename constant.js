@@ -8,7 +8,7 @@ const query = {
   CREATE_IF_NOT_EXIST_LAB_TABLE: "CREATE TABLE IF NOT EXISTS lab_details (lab_id int NOT NULL AUTO_INCREMENT, lab_name varchar(50) NOT NULL, lab_department varchar(50) NOT NULL, current_lab tinyint NOT NULL DEFAULT '0', PRIMARY KEY (lab_id)) ;",
   CREATE_IF_NOT_EXIST_ATTENDANCE_TABLE: "CREATE TABLE IF NOT EXISTS attendances (id int NOT NULL AUTO_INCREMENT, role varchar(45) DEFAULT 'student', roll_number varchar(50) NOT NULL, register_number bigint NOT NULL, name varchar(30) NOT NULL, department varchar(20) NOT NULL, section varchar(1) DEFAULT NULL, batch varchar(10) DEFAULT NULL, academic_year varchar(10) DEFAULT NULL, semester int DEFAULT NULL, logintime datetime DEFAULT NULL, logouttime datetime DEFAULT NULL, lab_id int DEFAULT NULL, machine_no int DEFAULT NULL, createdAt datetime DEFAULT CURRENT_TIMESTAMP, updatedAt datetime DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (id), KEY FK_lab_id_idx (lab_id), CONSTRAINT FK_lab_id FOREIGN KEY (lab_id) REFERENCES lab_details (lab_id)); ",
   ADD_ADMIN: "INSERT INTO admin SET ?;",
-
+  GET_DEFAULT_ADMIN: "SELECT id FROM admin where roll_number= ?;",
   /* Admin and Student signin and out */
   //View Roll Number 
   STUDENT_ROLLNUMBER: "SELECT * FROM students WHERE roll_number = ?;",
