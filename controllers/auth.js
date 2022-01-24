@@ -44,7 +44,7 @@ const academicYear = (batch) => {
   return acadSem;
 };
 
-exports.signup = (req, res) => {
+exports.signup = (req, res, done) => {
   var student = {
     name: req.body.name,
     roll_number: req.body.rollNumber,
@@ -74,10 +74,10 @@ exports.signup = (req, res) => {
                 error: "Failed to Store",
               });
             } else {
-              return res.json({
+              return done(null, res.json({
                 message:
                   "Student Details Added successfully!Now Student Can Login",
-              });
+              }));
             }
           }
         );

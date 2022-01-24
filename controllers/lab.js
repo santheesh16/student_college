@@ -5,7 +5,7 @@ let Query = require("../constant");
 
 
 //viewStudentSection
-exports.viewStudentAttendance = (req, res) => {
+exports.viewStudentAttendance = (req, res, done) => {
   let details = req.body.searchColumns;
   const labName = '%'+details.labName+'%';
   const dateWise = '%'+details.dateWise+'%';
@@ -40,13 +40,13 @@ exports.viewStudentAttendance = (req, res) => {
           error: "No data Found",
         });
       } else {
-        return res.json(user);
+        return done(null, res.json(user));
       }
     }
   );
 };
 
-exports.viewLabName = (req, res) => {
+exports.viewLabName = (req, res, done) => {
   const lab_department = req.body.labDepartment;
   console.log(lab_department)
   console.log(req.body);
@@ -64,13 +64,13 @@ exports.viewLabName = (req, res) => {
           error: "No data Found",
         });
       } else {
-        return res.json(user);
+        return done(null, res.json(user));
       }
     }
   );
 }
 
-exports.viewLabDetails = (req, res) => {
+exports.viewLabDetails = (req, res, done) => {
   connection.query(
     Query.GET_LABS_DETAILS,
     function (error, user, fields) {
@@ -85,13 +85,13 @@ exports.viewLabDetails = (req, res) => {
           error: "No data Found",
         });
       } else {
-        return res.json(user);
+        return done(null, res.json(user));
       }
     }
   );
 }
 
-exports.addLab = (req, res) => {
+exports.addLab = (req, res, done) => {
 
   var lab = {
     lab_id: req.body.labId,
@@ -109,15 +109,15 @@ exports.addLab = (req, res) => {
         });
       } else {
         console.log("LABADD ERROR", error);
-        return res.status(400).json({
+        return done(null, res.status(400).json({
           error: "Please enter lab details carefully!!",
-        });
+        }));
       }
     }
   );
 }
 
-exports.updateLab = (req, res) => {
+exports.updateLab = (req, res, done) => {
   const { labId, labName, labDept, currentLab} = req.body;
   connection.query(
     Query.GET_LAB_DETAILS, [labId] ,
@@ -136,9 +136,10 @@ exports.updateLab = (req, res) => {
         function (error, user, fields) {
           if (error) {
             console.log("LAB UPDATED ERROR", error);
-            return res.status(400).json({
+            return done(null, res.status(400).json({
               error: "Lab update failed",
-            });
+            }));
+            
           }
         }
       );
@@ -147,20 +148,21 @@ exports.updateLab = (req, res) => {
     )
 }
 
-exports.deleteLab = (req, res) => {
+exports.deleteLab = (req, res, done) => {
   const labId = req.params.lab_id;
   connection.query(
     Query.DELETE_LAB,
     labId,
     function (error, user, fields) {
       if (error) {
-        return res.status(400).json({
+        return done(null, res.status(400).json({
           error: "Lab not found",
-        });
+        }));
       }
-      res.json({
+      return done(null, res.json({
         message: "Deleted Successfully",
-      });
+      }));
+      
     }
   );
 }

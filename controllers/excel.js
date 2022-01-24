@@ -11,11 +11,11 @@ const template = fs.readFileSync(
 );
 let Query = require("../constant");
 
-exports.upload = (req, res) => {
+exports.upload = (req, res, done) => {
   if (req.file == undefined) {
-    return res.status(400).json({
+    return done(null, res.status(400).json({
       message: "Please upload an excel file!",
-    });
+    }));
   }
   let path =
     __basedir +
@@ -31,24 +31,24 @@ exports.upload = (req, res) => {
         function (error, user, fields) {
           if (error) {
             console.log("ADD STUDENT ERROR", error);
-            return res.status(400).json({
+            return done(null, res.status(400).json({
               error: "Please!! Remove Id Column in Excel",
-            });
+            }));
           }
         }
       );
     });
-    return res.json({
+    return done(null, res.json({
       message: "Students details successfully added",
-    });
+    }));
   });
 };
 
-exports.uploadUpdate = (req, res) => {
+exports.uploadUpdate = (req, res, done) => {
   if (req.file == undefined) {
-    return res.status(400).json({
+    return done(null, res.status(400).json({
       message: "Please upload an excel file!",
-    });
+    }));
   }
   let path =
     __basedir +
@@ -83,21 +83,21 @@ exports.uploadUpdate = (req, res) => {
         function (error, user, fields) {
           if (error) {
             console.log("SIGNUP ERROR", error);
-            return res.status(400).json({
+            return done(null, res.status(400).json({
               error: "Failed to store the students ",
-            });
+            }));
           }
         }
       );
     });
-    return res.json({
+    return done(null, res.json({
       message: "Students details successfully upated",
-    });
+    }));
   });
 };
 
 
-const resExcel = (students, res) => {
+const resExcel = (students, res, done) => {
   let attendance = [];
   students.forEach((student) => {
     attendance.push({
@@ -149,12 +149,12 @@ const resExcel = (students, res) => {
     "attachment; filename = " + "Attendance.xlsx"
   );
 
-  return workbook.xlsx.write(res).then(function () {
+  return done(null, workbook.xlsx.write(res).then(function () {
     res.status(200).end();
-  });
+  }));
 };
 
-exports.excelStudent = (req, res) => {
+exports.excelStudent = (req, res, done) => {
   let details = req.body.searchColumns;
   console.log(req.body)
   const labName = '%'+details.labName+'%';
@@ -180,9 +180,9 @@ exports.excelStudent = (req, res) => {
     ],
     function (error, students, fields) {
       if (error) {
-        return res.status(400).json({
+        return done(null, res.status(400).json({
           error: "Failed to get Student details",
-        });
+        }));
       } else {
         resExcel(students, res);
       }
@@ -191,18 +191,18 @@ exports.excelStudent = (req, res) => {
 };
 
 
-exports.downloadPdf = (req, res) => {
+exports.downloadPdf = (req, res, done) => {
   setTimeout(() => {
     var data = fs.readFileSync(
       path.resolve(__dirname, "../pdfs/attendance.pdf")
     );
     res.contentType("application/pdf");
-    res.send(data);
+    done(null, res.send(data));
   }, 4000);
 };
 
 
-exports.pdfStudent = (req, res) => {
+exports.pdfStudent = (req, res, done) => {
   let details = req.body.searchColumns;
   console.log(req.body)
   const labName = '%'+details.labName+'%';
@@ -227,9 +227,9 @@ exports.pdfStudent = (req, res) => {
     ],
     function (error, details, fields) {
       if (error) {
-        return res.status(400).json({
+        return done(null, res.status(400).json({
           error: "Failed to get Student detail",
-        });
+        }));
       } else {
         const options = {
           format: "A4",
@@ -246,11 +246,11 @@ exports.pdfStudent = (req, res) => {
 
         if (detail.length > 0) {
           pdf.create(document, options);
-          res.send(Promise.resolve());
+          done(null, res.send(Promise.resolve()));
         } else {
-          return res.status(400).json({
+          return done(null, res.status(400).json({
             error: "No data Found!! Pdf Not Created",
-          });
+          }));
         }
       }
     }
