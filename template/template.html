@@ -4,9 +4,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <title>Document</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#000000" />
+  <title>Attendance Details</title>
   <style>
+    h3,
+    h4,
+    h5 {
+      text-align: center;
+    }
+
     table {
       width: 100%;
     }
@@ -39,18 +46,125 @@
       border-color: #000;
       background: #FFF
     }
+
+    .column1 {
+      background-image: url("./logo.png");
+      float: left;
+      justify-items: center;
+    }
+
+    .column2 {
+      float: initial;
+    }
+
+    .lab-details {
+      margin-left: 40px;
+    }
+
+    label {
+      padding: 0px 12px 12px 0;
+      display: inline-block;
+    }
+
+
+    .container {
+      border-radius: 5px;
+      padding: 20px;
+
+    }
+
+    .col-10 {
+      float: left;
+      width: 20%;
+      margin-top: 6px;
+      font-weight: bold;
+      font-size: .85em;
+    }
+
+    .col-90 {
+
+      width: 80%;
+      margin-top: 6px;
+      font-weight: bold;
+      font-size: .8em;
+
+    }
+
+    .row:after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+
+    input {
+      border: 0;
+      outline: 0;
+    }
+
+    input:focus {
+      outline: none !important;
+    }
   </style>
 </head>
 
 <body>
+  <div class="row">
+    <div class="column1">
+      <img src="https://raw.githubusercontent.com/santheesh16/student_college/main/client/src/assets/icons/logo.webp"
+        alt="KPR_LOGO" width="150px" height="160px">
+    </div>
+    <div class="column2">
+      <h3>KPR INSTITUTE OF ENGINEERING AND TECHNOLOGY</h3>
+      <h5>(Autonomous Institution Affiliated to Anna University, Chennai)</h5>
+      <h4>Avinashi Road, Arasur, COIMBATORE - 641 407.</h4>
+      <h4>Student Attendance Namelist</h4>
+    </div>
+  </div>
+
+
+  <div class="container">
+    <div class="row">
+      <div class="col-10">
+        <label for="academicLabel">Academic Year</label>
+      </div>
+      <div class="col-90">
+        <input type="text" id="fname" name="academicYear">: {{detail.academicYear}}</input>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-10">
+        <label for="semesterLabel">Year / Semester</label>
+      </div>
+      <div class="col-90">
+        <input type="text" id="lname" name="semester">: {{detail.semester}}</input>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-10">
+        <label for="semesterLabel">Lab / Dept Name</label>
+      </div>
+      <div class="col-90">
+        <input type="text" id="lname" name="semester">: {{detail.labDept}}</input>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-10">
+        <label for="semesterLabel">Attendance Date</label>
+      </div>
+      <div class="col-90">
+        <input type="text" id="lname" name="semester">: {{detail.dateAttend}}</input>
+      </div>
+    </div>
+  </div>
+
   <table>
     <thead>
       <tr>
-        <th>Id</th>
-        <th>Roll Number</th>
-        <th>Student Name</th>
-        <th>Department</th>
-        <th>Lab Id</th>
+        <th>S.No</th>
+        <th>Roll No</th>
+        <th>Name of the Student</th>
+        <th>Dept of the Student</th>
+
         <th>Date</th>
         <th>Login Time</th>
         <th>Logout Time</th>
@@ -58,13 +172,13 @@
       </tr>
     </thead>
     <tbody>
-      {{#each detail}}
+      {{#each detail.attendance}}
       <tr>
         <td>{{this.id}}</td>
         <td>{{this.roll_number}}</td>
         <td>{{this.name}}</td>
         <td>{{this.department}}</td>
-        <td>{{this.lab_id}}</td>
+
         <td>{{this.date}}</td>
         <td>{{this.logintime}}</td>
         <td>{{this.logouttime}}</td>

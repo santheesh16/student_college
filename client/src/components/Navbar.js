@@ -10,7 +10,7 @@ import "bootstrap/js/src/collapse.js";
 import "../App.css";
 import "./style.css";
 import { Navbar, Nav } from "react-bootstrap";
-import KPR_LOGO from "../assets/icons/logo.webp";
+import KPR_LOGO from "../assets/icons/KPR_Logo.webp";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLaptopHouse,faUserGraduate, faUserShield, faListAlt ,faAddressBook, faHandsHelping ,
   faUserPlus, faUserEdit, faUserLock, faPowerOff} from "@fortawesome/free-solid-svg-icons";
@@ -29,7 +29,7 @@ const PowerOff= <FontAwesomeIcon icon={faPowerOff} />;
 const Layout = ({ children, match, history }) => {
   const isActive = (path) => {
     if (match.path === path) {
-      return { color: "blue" };
+      return { color: "red" };
     } else {
       return { color: "#fff" };
     }
@@ -61,7 +61,7 @@ const Layout = ({ children, match, history }) => {
   };
 
   const nav = () => (
-    <Navbar bg="primary" expand="lg" className="navbar">
+    <Navbar expand="lg" className="navbar">
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
@@ -141,28 +141,7 @@ const Layout = ({ children, match, history }) => {
               </Fragment>
             )}
 
-            {/* {isStudlog() && isStudlog().role === "student" && (
-              <Fragment>
-                <li className="nav-item">
-                  <Link
-                    to="/home"
-                    className="nav-link "
-                    style={isActive("/home")}
-                  >
-                    Home
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link
-                    className="nav-link"
-                    style={isActive("/private")}
-                    to="/private"
-                  >
-                    {isStudlog().name}
-                  </Link>
-                </li>
-              </Fragment>
-            )}  */}
+            
             {isAuth() && isAuth().role === "admin" && (
               <li>
                 <Link
@@ -177,7 +156,7 @@ const Layout = ({ children, match, history }) => {
             )}
           </ul>
           {
-            <li className="nav-link ">
+            <div className="nav-link end">
               <button
                 className="btn btn-outline-danger"
                 style={{ cursor: "pointer", color: "#fff" }}
@@ -186,20 +165,24 @@ const Layout = ({ children, match, history }) => {
                 {PowerOff}
                 Signout
               </button>
-            </li>
+            </div>
           }
-         
-          
-          
         </Nav>
       </Navbar.Collapse>
     </Navbar>
   );
 
+  const footerNav = () => (
+    <div className="navbar footer">
+      <p>Learn Beyond</p>
+    </div>
+  )
+
   return (
     <Fragment>
       {nav()}
       <div className="container">{children}</div>
+      
     </Fragment>
   );
 };

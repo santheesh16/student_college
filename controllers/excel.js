@@ -13,9 +13,12 @@ let Query = require("../constant");
 
 exports.upload = (req, res, done) => {
   if (req.file == undefined) {
-    return done(null, res.status(400).json({
-      message: "Please upload an excel file!",
-    }));
+    return done(
+      null,
+      res.status(400).json({
+        message: "Please upload an excel file!",
+      })
+    );
   }
   let path =
     __basedir +
@@ -31,24 +34,33 @@ exports.upload = (req, res, done) => {
         function (error, user, fields) {
           if (error) {
             console.log("ADD STUDENT ERROR", error);
-            return done(null, res.status(400).json({
-              error: "Please!! Remove Id Column in Excel",
-            }));
+            return done(
+              null,
+              res.status(400).json({
+                error: "Please!! Remove Id Column in Excel",
+              })
+            );
           }
         }
       );
     });
-    return done(null, res.json({
-      message: "Students details successfully added",
-    }));
+    return done(
+      null,
+      res.json({
+        message: "Students details successfully added",
+      })
+    );
   });
 };
 
 exports.uploadUpdate = (req, res, done) => {
   if (req.file == undefined) {
-    return done(null, res.status(400).json({
-      message: "Please upload an excel file!",
-    }));
+    return done(
+      null,
+      res.status(400).json({
+        message: "Please upload an excel file!",
+      })
+    );
   }
   let path =
     __basedir +
@@ -83,19 +95,24 @@ exports.uploadUpdate = (req, res, done) => {
         function (error, user, fields) {
           if (error) {
             console.log("SIGNUP ERROR", error);
-            return done(null, res.status(400).json({
-              error: "Failed to store the students ",
-            }));
+            return done(
+              null,
+              res.status(400).json({
+                error: "Failed to store the students ",
+              })
+            );
           }
         }
       );
     });
-    return done(null, res.json({
-      message: "Students details successfully upated",
-    }));
+    return done(
+      null,
+      res.json({
+        message: "Students details successfully upated",
+      })
+    );
   });
 };
-
 
 const resExcel = (students, res, done) => {
   let attendance = [];
@@ -149,22 +166,25 @@ const resExcel = (students, res, done) => {
     "attachment; filename = " + "Attendance.xlsx"
   );
 
-  return done(null, workbook.xlsx.write(res).then(function () {
-    res.status(200).end();
-  }));
+  return done(
+    null,
+    workbook.xlsx.write(res).then(function () {
+      res.status(200).end();
+    })
+  );
 };
 
 exports.excelStudent = (req, res, done) => {
   let details = req.body.searchColumns;
-  console.log(req.body)
-  const labName = '%'+details.labName+'%';
-  const dateWise = '%'+details.dateWise+'%';
-  const studentBatch =  '%'+details.studentBatch+'%';
-  const academicYear =  '%'+details.academicYear+'%';
-  const semester =  '%'+details.semester+'%';
-  const studentDept =  '%'+details.studentDept+'%';
-  const section = '%'+details.section+'%';
-  const studentName = '%'+details.studentName+'%';
+  console.log(req.body);
+  const labName = "%" + details.labName + "%";
+  const dateWise = "%" + details.dateWise + "%";
+  const studentBatch = "%" + details.studentBatch + "%";
+  const academicYear = "%" + details.academicYear + "%";
+  const semester = "%" + details.semester + "%";
+  const studentDept = "%" + details.studentDept + "%";
+  const section = "%" + details.section + "%";
+  const studentName = "%" + details.studentName + "%";
 
   connection.query(
     Query.ATTENDANCE_DETAIL,
@@ -176,13 +196,16 @@ exports.excelStudent = (req, res, done) => {
       semester,
       studentDept,
       section,
-      studentName
+      studentName,
     ],
     function (error, students, fields) {
       if (error) {
-        return done(null, res.status(400).json({
-          error: "Failed to get Student details",
-        }));
+        return done(
+          null,
+          res.status(400).json({
+            error: "Failed to get Student details",
+          })
+        );
       } else {
         resExcel(students, res);
       }
@@ -190,6 +213,26 @@ exports.excelStudent = (req, res, done) => {
   );
 };
 
+const removeDuplicates = (array) => {
+  var outputArray = [];
+  var count = 0;
+  var start = false;
+
+  for (j = 0; j < array.length; j++) {
+    for (k = 0; k < outputArray.length; k++) {
+      if (array[j] == outputArray[k]) {
+        start = true;
+      }
+    }
+    count++;
+    if (count == 1 && start == false) {
+      outputArray.push(array[j]);
+    }
+    start = false;
+    count = 0;
+  }
+  return outputArray;
+};
 
 exports.downloadPdf = (req, res, done) => {
   setTimeout(() => {
@@ -201,18 +244,17 @@ exports.downloadPdf = (req, res, done) => {
   }, 4000);
 };
 
-
 exports.pdfStudent = (req, res, done) => {
   let details = req.body.searchColumns;
-  console.log(req.body)
-  const labName = '%'+details.labName+'%';
-  const dateWise = '%'+details.dateWise+'%';
-  const studentBatch =  '%'+details.studentBatch+'%';
-  const academicYear =  '%'+details.academicYear+'%';
-  const semester =  '%'+details.semester+'%';
-  const studentDept =  '%'+details.studentDept+'%';
-  const section = '%'+details.section+'%';
-  const studentName = '%'+details.studentName+'%';
+  console.log(req.body);
+  const labName = "%" + details.labName + "%";
+  const dateWise = "%" + details.dateWise + "%";
+  const studentBatch = "%" + details.studentBatch + "%";
+  const academicYear = "%" + details.academicYear + "%";
+  const semester = "%" + details.semester + "%";
+  const studentDept = "%" + details.studentDept + "%";
+  const section = "%" + details.section + "%";
+  const studentName = "%" + details.studentName + "%";
   connection.query(
     Query.ATTENDANCE_DETAIL,
     [
@@ -223,19 +265,70 @@ exports.pdfStudent = (req, res, done) => {
       semester,
       studentDept,
       section,
-      studentName
+      studentName,
     ],
     function (error, details, fields) {
       if (error) {
-        return done(null, res.status(400).json({
-          error: "Failed to get Student detail",
-        }));
+        return done(
+          null,
+          res.status(400).json({
+            error: "Failed to get Student detail",
+          })
+        );
       } else {
         const options = {
           format: "A4",
           orientation: "portrait",
         };
-        const detail = details;
+        let academicYears = [];
+        let semesters = [];
+        let labDept = [];
+        let dateAttend = [];
+        details.forEach((i) => {
+          if (i.semester % 2 == 0) {
+            academicYears.push(i.academic_year + " ( Even Sem )");
+          } else {
+            academicYears.push(i.academic_year + " ( Odd Sem )");
+          }
+          switch (i.semester) {
+            case 1:
+              semesters.push( " I / " +i.semester);
+              break;
+            case 2:
+              semesters.push( " I / " +i.semester);
+              break;
+            case 3:
+              semesters.push( " II / " +i.semester);
+              break;
+            case 4:
+              semesters.push( " II / " +i.semester);
+              break;
+            case 5:
+              semesters.push( " III / " +i.semester);
+              break;
+            case 6:
+              semesters.push( " III / " +i.semester);
+              break;
+            case 7:
+              semesters.push( " IV / " +i.semester);
+              break;
+            default:
+              semesters.push( " IV / " +i.semester);
+              break;
+          }
+          labDept.push(i.lab_name + " / " + i.lab_department);
+          dateAttend.push(i.date);
+        });
+
+        const obj = {
+          academicYear: removeDuplicates(academicYears).toString(),
+          semester: removeDuplicates(semesters).toString(),
+          labDept : removeDuplicates(labDept).toString(),
+          dateAttend : removeDuplicates(dateAttend).toString(),
+          attendance: details,
+        };
+        
+        const detail = obj;
         const document = {
           html: template,
           data: {
@@ -244,15 +337,39 @@ exports.pdfStudent = (req, res, done) => {
           path: "./pdfs/attendance.pdf",
         };
 
-        if (detail.length > 0) {
+        if (detail.attendance.length > 0) {
           pdf.create(document, options);
           done(null, res.send(Promise.resolve()));
         } else {
-          return done(null, res.status(400).json({
-            error: "No data Found!! Pdf Not Created",
-          }));
+          return done(
+            null,
+            res.status(400).json({
+              error: "No data Found!! Pdf Not Created",
+            })
+          );
         }
       }
     }
   );
 };
+
+/*
+RowDataPacket {
+[server]     id: 4,
+[server]     roll_number: '18cs118',
+[server]     register_number: 7113,
+[server]     name: 'Santheesh Arumugam',
+[server]     department: 'CSE',
+[server]     lab_name: 'Data Structure',
+[server]     lab_department: 'CSE',
+[server]     section: 'C',
+[server]     semester: 8,
+[server]     batch: '2018-2022',
+[server]     academic_year: '2021-2022',
+[server]     date: '24-01-2022',
+[server]     logintime: '08:42:30',
+[server]     logouttime: '12:55:21',
+[server]     machine_no: 6,
+[server]     lab_id: 1
+[server]   }
+*/
