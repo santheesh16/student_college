@@ -276,10 +276,7 @@ exports.pdfStudent = (req, res, done) => {
           })
         );
       } else {
-        const options = {
-          format: "A4",
-          orientation: "portrait",
-        };
+       
         let academicYears = [];
         let semesters = [];
         let labDept = [];
@@ -329,6 +326,10 @@ exports.pdfStudent = (req, res, done) => {
         };
         
         const detail = obj;
+        const options = {
+          format: "A4",
+          orientation: "portrait",
+        };
         const document = {
           html: template,
           data: {
