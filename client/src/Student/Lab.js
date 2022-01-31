@@ -1,53 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import Layout from "../components/Navbar";
 import axios from "axios";
-import { isStudlog, getCookie } from "../auth/helpers";
+import { isStudlog, getCookie, signout } from "../auth/helpers";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 import "./style.css";
 
 const Lab = ({ history }) => {
   const [values, setValues] = useState({
-    lab_name: "",
-    lab_department: "",
+    labName: "",
+    labDepartment: "",
     machine_no: "",
     tabSwitch: "",
     buttonText: "Submit",
+    labsDepartment: ["Choose..."],
+    labNames: [],
   });
 
-  let type = null;
-  let options = null;
-  /** Different arrays for different dropdowns */
-  const CSE = [
-    "Software Engineer",
-    "Data Structure ",
-    "Computer Network",
-    "Redhat Interprised",
-  ];
-  const ECE = [
-    "Computer Electrical", 
-    "Programming Python"
-  ];
-  const EEE = [
-    "Electronic Science",
-    "Designing in Electronic",
-    "Electrical Computer",
-  ];
-  const MECH = [
-    "English Listening ",
-    "Object Oriented",
-    "Basics Computer Programming",
-  ];
-  const BIOMED = [
-    "Staff Maintain Computer",
-    "Student Details Lab",
-    "Programming Lab"];
   const {
-    lab_name,
-    lab_department,
+    labName,
+    labDepartment,
     machine_no,
     tabSwitch,
     buttonText,
+    labsDepartment,
+    labNames
   } = values;
 
   const handleChange = (name) => (event) => {
@@ -55,18 +32,59 @@ const Lab = ({ history }) => {
     setValues({ ...values, [name]: event.target.value });
   };
 
-  /** Setting Type variable according to dropdown */
-  if (lab_department === "CSE") { 
-    type = CSE; 
-  } else if (lab_department === "ECE") { 
-    type = ECE; 
-  } else if (lab_department === "EEE") { 
-    type = EEE; 
-  } else if (lab_department === "MECH") { 
-    type = MECH; 
-  } else if (lab_department === "BIOMED") { 
-    type = BIOMED; 
-  }
+  useEffect(() => {
+    loadBlock();
+  }, []);
+
+  const optionsView = (lists) => {
+    return lists.map((el) => <option key={el}>{el}</option>);
+  };
+  
+  const loadBlock = () => {
+    axios({
+      method: "POST",
+      url: "/api/lab/load-details/all",
+      headers: {
+        Authorization: `Bearer ${getCookie("token")}`,
+      },
+    })
+      .then((response) => {
+        console.log("GET LAB SUCCESS", response.data);
+        let labDetails = response.data
+        for (let i = 0; i < response.data.length; i++) {
+          labsDepartment.push(response.data[i].lab_department);
+        }
+        let dept = [];
+        for (let i = 0, l = labsDepartment.length; i < l; i++) {
+          if (
+            dept.indexOf(labsDepartment[i]) === -1 &&
+            labsDepartment[i] !== ""
+          ) {
+            dept.push(labsDepartment[i]);
+          }
+        }
+        setValues({ ...values, labsDepartment: dept});
+        let names = ["Choose Dept"]
+        labNames.push(names)
+        for (let i = 1; i < dept.length; i++) {
+          names = []
+          for (var j = 0; j < labDetails.length; j++) {
+            if(dept[i] === labDetails[j].lab_department){
+              names.push(labDetails[j].lab_name)
+            }
+          }
+          labNames.push(names)
+        }
+      })
+      .catch((error) => {
+        console.log("GET LAB  ERROR", error.response.data.error);
+        if (error.response.status === 401) {
+          signout(() => {
+            history.push("/");
+          });
+        }
+      });
+  };
   const clickSubmit = (event) => {
     event.preventDefault();
     setValues({ ...values, buttonText: "Submitting" });
@@ -76,7 +94,7 @@ const Lab = ({ history }) => {
       headers: {
         Authorization: `Bearer ${getCookie("token")}`,
       },
-      data: { lab_name, lab_department, machine_no },
+      data: { labName, labDepartment, machine_no },
     })
       .then((response) => {
         console.log("LAB SUCCESS", response.data);
@@ -109,9 +127,6 @@ const Lab = ({ history }) => {
     </form>
   );
 
-  if (type) { 
-    options = type.map((el) => <option key={el}>{el}</option>); 
-  } 
   const labForm = () => (
     <form className="container col-md-10 border border-dark rounded mx-auto login-success ">
       <div className="form-group ">
@@ -121,17 +136,16 @@ const Lab = ({ history }) => {
         </label>
         <select
           id="inputState"
-          onChange={handleChange("lab_department")}
+          onChange={handleChange("labDepartment")}
           type="text"
-          value={lab_department}
+          value={labDepartment}
           className="form-control"
         >
-          <option selected>Choose Your Lab Department</option>
-          <option>CSE</option>
-          <option>ECE</option>
-          <option>EEE</option>
-          <option>MECH</option>
-          <option>BIOMED</option>
+         {labsDepartment.length > 0 ? (
+              optionsView(labsDepartment)
+            ) : (
+              <option>No Labs</option>
+            )}
         </select>
       </div>
       <div className="form-row">
@@ -139,12 +153,16 @@ const Lab = ({ history }) => {
           <label className="col-form-label font-weight-bold">Lab Name</label>
           <select
             id="inputState"
-            onChange={handleChange("lab_name")}
+            onChange={handleChange("labName")}
             type="text"
-            value={lab_name}
+            value={labName}
             className="form-control"
           >
-            {options}
+            {labDepartment.length > 0 ? (
+              optionsView(labNames[labsDepartment.indexOf(labDepartment)])
+            ) : (
+              <option>Choose Dept</option>
+            )}
           </select>
         </div>
         <div className="form-group col-md-6">
