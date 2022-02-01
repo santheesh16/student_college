@@ -83,13 +83,25 @@ exports.update = (req, res) => {
     }
   );
 };
-
-exports.labUpdate = (req, res) => {
+/*
+console.log(details)
   const roll_number = req.params.roll_number;
-  const { lab_name, lab_department, machine_no } = req.body;
+  const labName =  details.labName;
+  const labDpt =  details.labDpt;
+  const machineNo = details.machine_no; 
+*/
+exports.labUpdate = (req, res) => {
+  let details = req.body.searchColumns;
+  const roll_number = req.params.roll_number;
+  console.log(details)
+  
+  const labName =  details.labName;
+  const labDpt =  details.labDpt;
+  const machineNo = details.machine_no; 
+  
   connection.query(
     Query.GET_LAB_ID,
-    [lab_name, lab_department],
+    [labName, labDpt],
     function (error, user, fields) {
       console.log(user);
       if (error) {
@@ -101,7 +113,7 @@ exports.labUpdate = (req, res) => {
         if (user.length > 0) {
           connection.query(
             Query.UPDATE_ATTENDANCE,
-            [user[0].lab_id, machine_no, roll_number],
+            [user[0].lab_id, machineNo, roll_number],
             function (error, update, fields) {
               if (error) {
                 console.log("LAB UPDATED ERROR", error);

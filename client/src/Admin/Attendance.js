@@ -22,7 +22,7 @@ const Attendance = ({ history }) => {
     labsDepartment: ["Choose..."],
     labNames: [],
     details: [],
-    labDetails : []
+    
   });
 
   useEffect(() => {
@@ -117,7 +117,7 @@ const Attendance = ({ history }) => {
         let names = ["Choose Dept"]
         labNames.push(names)
         for (let i = 1; i < dept.length; i++) {
-          names = []
+          names = ["Choose..."]
           for (var j = 0; j < labDetails.length; j++) {
             if(dept[i] === labDetails[j].lab_department){
               names.push(labDetails[j].lab_name)

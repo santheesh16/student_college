@@ -30,6 +30,7 @@ const Lab = ({ history }) => {
   const handleChange = (name) => (event) => {
     // console.log(event.target.value);
     setValues({ ...values, [name]: event.target.value });
+    console.log(labName)
   };
 
   useEffect(() => {
@@ -51,6 +52,7 @@ const Lab = ({ history }) => {
       .then((response) => {
         console.log("GET LAB SUCCESS", response.data);
         let labDetails = response.data
+        console.log(labDetails)
         for (let i = 0; i < response.data.length; i++) {
           labsDepartment.push(response.data[i].lab_department);
         }
@@ -66,15 +68,18 @@ const Lab = ({ history }) => {
         setValues({ ...values, labsDepartment: dept});
         let names = ["Choose Dept"]
         labNames.push(names)
+        console.log(labNames)
         for (let i = 1; i < dept.length; i++) {
-          names = []
+          names = ["Choose..."]
           for (var j = 0; j < labDetails.length; j++) {
+            
             if(dept[i] === labDetails[j].lab_department){
               names.push(labDetails[j].lab_name)
             }
           }
           labNames.push(names)
         }
+        console.log(labNames)
       })
       .catch((error) => {
         console.log("GET LAB  ERROR", error.response.data.error);
@@ -87,14 +92,22 @@ const Lab = ({ history }) => {
   };
   const clickSubmit = (event) => {
     event.preventDefault();
+    console.log(labName)
+    let labUpdate = {
+      labName: labName,
+      labDpt: labDepartment,
+      machineNo: machine_no,
+    };
+    const data = JSON.stringify({ searchColumns: labUpdate });
     setValues({ ...values, buttonText: "Submitting" });
     axios({
       method: "PUT",
       url: `/api/user/lab/${isStudlog().roll_number}`,
       headers: {
+        "Content-Type": "application/json",
         Authorization: `Bearer ${getCookie("token")}`,
       },
-      data: { labName, labDepartment, machine_no },
+      data,
     })
       .then((response) => {
         console.log("LAB SUCCESS", response.data);
