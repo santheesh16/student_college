@@ -325,9 +325,24 @@ exports.pdfStudent = (req, res, done) => {
         };
 
         const detail = obj;
+        let sideMargin = "1.5cm";
+        const options = {
+          height: "10.5in",
+          width: "8in",
+          format: "Letter",
+          orientation: "portrait",
 
+          border: {
+            top: "1cm", // default is 0, units: mm, cm, in, px
+            right: "1cm",
+            left: "1cm",
+          },
+        };
         const document = {
-          html: template,
+          html: {
+            template,
+            zoom: 0.55,
+          },
           data: {
             detail,
           },
@@ -335,10 +350,7 @@ exports.pdfStudent = (req, res, done) => {
         };
 
         if (detail.attendance.length > 0) {
-          pdf.create(document, {
-            format: "A4",
-            orientation: "portrait",
-          });
+          pdf.create(document, options);
           done(null, res.send(Promise.resolve()));
         } else {
           return done(
