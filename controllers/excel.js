@@ -166,12 +166,9 @@ const resExcel = (students, res, done) => {
     "attachment; filename = " + "Attendance.xlsx"
   );
 
-  return done(
-    null,
-    workbook.xlsx.write(res).then(function () {
-      res.status(200).end();
-    })
-  );
+  workbook.xlsx.write(res).then(function () {
+    res.status(200).end();
+  })
 };
 
 exports.excelStudent = (req, res, done) => {
@@ -200,12 +197,9 @@ exports.excelStudent = (req, res, done) => {
     ],
     function (error, students, fields) {
       if (error) {
-        return done(
-          null,
-          res.status(400).json({
-            error: "Failed to get Student details",
-          })
-        );
+        return res.status(400).json({
+          error: "Failed to get Student details",
+        })
       } else {
         resExcel(students, res);
       }
@@ -240,13 +234,12 @@ exports.downloadPdf = (req, res, done) => {
       path.resolve(__dirname, "../pdfs/attendance.pdf")
     );
     res.contentType("application/pdf");
-    done(null, res.send(data));
+    res.send(data)
   }, 4000);
 };
 
 exports.pdfStudent = (req, res, done) => {
   let details = req.body.searchColumns;
-  console.log(req.body);
   const labName = "%" + details.labName + "%";
   const dateWise = "%" + details.dateWise + "%";
   const studentBatch = "%" + details.studentBatch + "%";
@@ -269,14 +262,10 @@ exports.pdfStudent = (req, res, done) => {
     ],
     function (error, details, fields) {
       if (error) {
-        return done(
-          null,
-          res.status(400).json({
-            error: "Failed to get Student detail",
-          })
-        );
+        return res.status(400).json({
+          error: "Failed to get Student detail",
+        })
       } else {
-       
         let academicYears = [];
         let semesters = [];
         let labDept = [];
@@ -289,28 +278,28 @@ exports.pdfStudent = (req, res, done) => {
           }
           switch (i.semester) {
             case 1:
-              semesters.push( " I / " +i.semester);
+              semesters.push(" I / " + i.semester);
               break;
             case 2:
-              semesters.push( " I / " +i.semester);
+              semesters.push(" I / " + i.semester);
               break;
             case 3:
-              semesters.push( " II / " +i.semester);
+              semesters.push(" II / " + i.semester);
               break;
             case 4:
-              semesters.push( " II / " +i.semester);
+              semesters.push(" II / " + i.semester);
               break;
             case 5:
-              semesters.push( " III / " +i.semester);
+              semesters.push(" III / " + i.semester);
               break;
             case 6:
-              semesters.push( " III / " +i.semester);
+              semesters.push(" III / " + i.semester);
               break;
             case 7:
-              semesters.push( " IV / " +i.semester);
+              semesters.push(" IV / " + i.semester);
               break;
             default:
-              semesters.push( " IV / " +i.semester);
+              semesters.push(" IV / " + i.semester);
               break;
           }
           labDept.push(i.lab_name + " / " + i.lab_department);
@@ -320,11 +309,11 @@ exports.pdfStudent = (req, res, done) => {
         const obj = {
           academicYear: removeDuplicates(academicYears).toString(),
           semester: removeDuplicates(semesters).toString(),
-          labDept : removeDuplicates(labDept).toString(),
-          dateAttend : removeDuplicates(dateAttend).toString(),
+          labDept: removeDuplicates(labDept).toString(),
+          dateAttend: removeDuplicates(dateAttend).toString(),
           attendance: details,
         };
-        
+
         const detail = obj;
         const options = {
           height: "10.5in",

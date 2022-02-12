@@ -97,7 +97,7 @@ exports.labUpdate = (req, res) => {
   
   const labName =  details.labName;
   const labDpt =  details.labDpt;
-  const machineNo = details.machine_no; 
+  const machineNo = details.machineNo; 
   
   connection.query(
     Query.GET_LAB_ID,
@@ -129,7 +129,7 @@ exports.labUpdate = (req, res) => {
           );
         } else {
           return res.status(400).json({
-            error: "Laboratory and Department is not Exists",
+            error: "Laboratory/ Department/ Machine No does not exists",
           });
         }
       }

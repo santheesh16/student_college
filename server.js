@@ -8,7 +8,7 @@ require('dotenv').config();
 global.__basedir = __dirname + "/..";
 
 const app = express();
-const PORT = process.env.PORT || 8000; // Step 1
+const PORT = process.env.PORT || 5000; // Step 1
 
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');

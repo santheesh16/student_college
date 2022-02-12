@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import Layout from "../components/Navbar";
 import axios from "axios";
 import { isStudlog, getCookie, signout } from "../auth/helpers";
@@ -10,37 +10,69 @@ const Lab = ({ history }) => {
   const [values, setValues] = useState({
     labName: "",
     labDepartment: "",
-    machine_no: "",
+    machineNo: "",
     tabSwitch: "",
     buttonText: "Submit",
     labsDepartment: ["Choose..."],
     labNames: [],
+    labMachineLimit: []
   });
 
   const {
     labName,
     labDepartment,
-    machine_no,
+    machineNo,
     tabSwitch,
     buttonText,
     labsDepartment,
-    labNames
+    labNames,
+    labMachineLimit
   } = values;
 
   const handleChange = (name) => (event) => {
     // console.log(event.target.value);
     setValues({ ...values, [name]: event.target.value });
-    console.log(labName)
   };
 
   useEffect(() => {
     loadBlock();
   }, []);
 
-  const optionsView = (lists) => {
-    return lists.map((el) => <option key={el}>{el}</option>);
-  };
+  const machineLimits = () => {
+    for (let i = 1; i <= 40; i++) {
+      labMachineLimit.push(labName+"-"+("0"+i).slice(-2))
+    }
+    return optionsView(removeDuplicates(labMachineLimit));
+  }
+
+  const removeDuplicates = (array) => {
+    var outputArray = [];
+    var count = 0;
+    var start = false;
   
+    for (var j = 0; j < array.length; j++) {
+      for (var k = 0; k < outputArray.length; k++) {
+        if (array[j] == outputArray[k]) {
+          start = true;
+        }
+      }
+      count++;
+      if (count == 1 && start == false) {
+        outputArray.push(array[j]);
+      }
+      start = false;
+      count = 0;
+    }
+    return outputArray;
+  };
+
+  
+
+
+  const optionsView = (lists) => {
+    return lists.map((index) => <option key={index}>{index}</option>);
+  };
+
   const loadBlock = () => {
     axios({
       method: "POST",
@@ -65,21 +97,20 @@ const Lab = ({ history }) => {
             dept.push(labsDepartment[i]);
           }
         }
-        setValues({ ...values, labsDepartment: dept});
+        setValues({ ...values, labsDepartment: dept });
         let names = ["Choose Dept"]
         labNames.push(names)
         console.log(labNames)
         for (let i = 1; i < dept.length; i++) {
           names = ["Choose..."]
           for (var j = 0; j < labDetails.length; j++) {
-            
-            if(dept[i] === labDetails[j].lab_department){
+
+            if (dept[i] === labDetails[j].lab_department) {
               names.push(labDetails[j].lab_name)
             }
           }
           labNames.push(names)
         }
-        console.log(labNames)
       })
       .catch((error) => {
         console.log("GET LAB  ERROR", error.response.data.error);
@@ -91,12 +122,13 @@ const Lab = ({ history }) => {
       });
   };
   const clickSubmit = (event) => {
+    console.log(machineNo);
     event.preventDefault();
     console.log(labName)
     let labUpdate = {
       labName: labName,
       labDpt: labDepartment,
-      machineNo: machine_no,
+      machineNo: machineNo,
     };
     const data = JSON.stringify({ searchColumns: labUpdate });
     setValues({ ...values, buttonText: "Submitting" });
@@ -154,11 +186,11 @@ const Lab = ({ history }) => {
           value={labDepartment}
           className="form-control"
         >
-         {labsDepartment.length > 0 ? (
-              optionsView(labsDepartment)
-            ) : (
-              <option>No Labs</option>
-            )}
+          {labsDepartment.length > 0 ? (
+            optionsView(labsDepartment)
+          ) : (
+            <option>No Labs</option>
+          )}
         </select>
       </div>
       <div className="form-row">
@@ -182,24 +214,16 @@ const Lab = ({ history }) => {
           <label className="col-form-label font-weight-bold">Machine No</label>
           <select
             id="inputState"
-            onChange={handleChange("machine_no")}
+            onChange={handleChange("machineNo")}
             type="text"
-            value={machine_no}
+            value={machineNo}
             className="form-control"
           >
-            <option selected>Choose...</option>
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-            <option>6</option>
-            <option>7</option>
-            <option>8</option>
-            <option>9</option>
-            <option>10</option>
-            <option>11</option>
-            <option>12</option>
+            {labName !== "" && labName !== "Choose Dept" ? (
+            machineLimits()
+          ) : (
+            <option>Choose lab</option>
+          )}
           </select>
         </div>
       </div>
@@ -222,3 +246,4 @@ const Lab = ({ history }) => {
 };
 
 export default Lab;
+
