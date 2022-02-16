@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Redirect } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { authenticate, isAuth } from "../auth/helpers";
 import { ToastContainer, toast } from 'react-toastify';
 import '../../node_modules/react-toastify/dist/ReactToastify.css';
