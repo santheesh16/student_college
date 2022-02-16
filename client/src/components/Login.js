@@ -74,7 +74,7 @@ const Signin = ({ history }) => {
           </div>
           <div className="form-group col-md-6">
             <p className="forgot-password text-right">
-              Forgot <a href="/forgot">password?</a>
+              Forgot <Link to="/forgot">password?</Link>
             </p>
           </div>
 
