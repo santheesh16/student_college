@@ -44,12 +44,9 @@ exports.upload = (req, res, done) => {
         }
       );
     });
-    return done(
-      null,
-      res.json({
-        message: "Students details successfully added",
-      })
-    );
+    return res.json({
+      message: "Students details successfully added",
+    })
   });
 };
 
@@ -105,12 +102,9 @@ exports.uploadUpdate = (req, res, done) => {
         }
       );
     });
-    return done(
-      null,
-      res.json({
-        message: "Students details successfully upated",
-      })
-    );
+    return res.json({
+      message: "Students details successfully upated",
+    })
   });
 };
 

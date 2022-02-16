@@ -25,7 +25,7 @@ const Routes = () => {
         <AdminRoute path="/lab-attendance" exact component={Attendance} />
         <AdminRoute path="/admin-reset" exact component={AdminReset} />
         <Route path="/forgot" exact component={Forgot} />
-        <Route path="/auth/password/reset/:token" exact component={Reset} />
+        <Route path="/reset-password/:rollNumber/:token" exact component={Reset} />
         {/* Student Modification */}
         <Route path="/lab-preference" exact component={LabPreference} />
         <Route path="/lab-details" exact component={LabDetails} />

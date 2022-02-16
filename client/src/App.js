@@ -29,10 +29,6 @@ class App extends React.Component {
       <img src={COLLEGE_LOGO} alt="clg-logo" width="180px" height="180px"/>
       </div>
       <div className=" text-center col-auto p-2"> 
-      <button onClick= {() => {
-          localStorage.clear();
-          this.props.history.push('/');
-      }} className=" btn btn-outline-primary form-group"> Logout</button>
       </div>
     </div>
       </div>
