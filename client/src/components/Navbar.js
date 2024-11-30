@@ -133,7 +133,7 @@ const Layout = ({ children, match, history }) => {
                       aria-expanded="false"
                     >
                       {LaptopHouse}
-                      Lab
+                      Section
                     </Link>
                     <div
                       className="dropdown-menu"
@@ -177,7 +177,7 @@ const Layout = ({ children, match, history }) => {
                       aria-haspopup="true"
                     >
                       {UserGraduate}
-                      Student
+                      Employee
                     </Link>
                     <div
                       className="dropdown-menu"

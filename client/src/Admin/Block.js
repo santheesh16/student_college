@@ -166,7 +166,7 @@ const Block = ({ history }) => {
           onChange={handleChange("rollNumber")}
           className="form-control"
           type="search"
-          placeholder="Search Roll Number"
+          placeholder="Search Employee ID"
           aria-label="Search"
         />
         <button

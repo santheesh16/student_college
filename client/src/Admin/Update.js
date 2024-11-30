@@ -113,7 +113,7 @@ const Update = ({ history }) => {
         });
       })
       .catch((error) => {
-        toast.error("Roll Number Not Found");
+        toast.error("Employee ID Not Found");
         console.log("PRIVATE PROFILE UPDATE ERROR", error.response.data.error);
         if (error.response.status === 401) {
           signout(() => {
@@ -207,7 +207,7 @@ const Update = ({ history }) => {
           />
         </div>
         <div className="form-group col-md-6">
-          <label className="col-form-label">Roll Number</label>
+          <label className="col-form-label">Employee ID</label>
           <input
             onChange={handleChange("roll_number")}
             value={roll_number}
@@ -301,7 +301,7 @@ const Update = ({ history }) => {
               onChange={searchChange}
               className="form-control"
               type="search"
-              placeholder="Search Roll Number"
+              placeholder="Search Employee ID"
               aria-label="Search"
             />
             <button

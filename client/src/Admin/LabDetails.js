@@ -274,7 +274,7 @@ const LabDetails = ({ history }) => {
         <table>
           <thead>
             <tr>
-              <th>Current Lab</th>
+              <th>Current Section</th>
               <th>ID</th>
               <th>Name</th>
               <th>Department</th>
@@ -329,7 +329,7 @@ const LabDetails = ({ history }) => {
         <table>
           <thead>
             <tr>
-              <th>Current Lab</th>
+              <th>Current Section</th>
               <th>ID</th>
               <th>Name</th>
               <th>Department</th>

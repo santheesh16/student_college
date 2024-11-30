@@ -146,7 +146,7 @@ exports.adminStudentRead = (req, res) => {
     function (error, user, fields) {
       if (error || !user[0]) {
         return res.status(400).json({
-          error: "Roll Number not found",
+          error: "Employee ID not found",
         });
       }
       res.json(user[0]);
@@ -398,7 +398,7 @@ exports.blockList = (req, res) => {
     function (error, user, fields) {
       if (error || !user) {
         return res.status(400).json({
-          error: "Roll Number not found",
+          error: "Employee ID not found",
         });
       }
       res.json(user);

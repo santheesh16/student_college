@@ -93,7 +93,7 @@ const Private = ({ history }) => {
           />
         </div>
         <div className="form-group col-md-6">
-          <label className="col-form-label font-weight-bold">Roll Number</label>
+          <label className="col-form-label font-weight-bold">Employee ID</label>
           <input
             onChange={handleChange("roll_number")}
             value={roll_number}

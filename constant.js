@@ -10,7 +10,7 @@ const query = {
   ADD_ADMIN: "INSERT INTO admin SET ?;",
   GET_DEFAULT_ADMIN: "SELECT id FROM admin where roll_number= ?;",
   /* Admin and Student signin and out */
-  //View Roll Number 
+  //View Employee ID 
   STUDENT_ROLLNUMBER: "SELECT * FROM students WHERE roll_number = ?;",
   ADMIN_ROLLNUMBER: "SELECT * FROM admin WHERE admin.roll_number = ?;",
   ADMIN_ID: "SELECT * FROM admin WHERE id = ?;",

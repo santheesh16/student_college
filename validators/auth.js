@@ -22,7 +22,7 @@ exports.userSigninValidator = [
     check('roll_number')
         .not()
         .isEmpty()
-        .withMessage('Roll Number is required'),
+        .withMessage('Employee ID is required'),
     check('password')
         .isLength({ min: 6 })
         .withMessage('Password must be at least  6 characters long')

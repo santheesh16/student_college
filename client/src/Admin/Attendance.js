@@ -264,7 +264,7 @@ const Attendance = ({ history }) => {
         <thead>
           <tr>
             <th>ID</th>
-            <th>Roll Number</th>
+            <th>Employee ID</th>
             <th>Register Number</th>
             <th>Name</th>
             <th>Department</th>

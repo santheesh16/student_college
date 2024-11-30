@@ -57,7 +57,7 @@ const Reset = ({ match, history }) => {
     const passwordResetForm = () => (
         <form>
             <div className="form-group">
-                <label className="text-muted">Email</label>
+                <label className="text-muted">Employee ID</label>
                 <input
                     onChange={handleChange('newPassword')}
                     value={newPassword}

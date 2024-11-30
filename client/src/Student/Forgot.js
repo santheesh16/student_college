@@ -46,7 +46,7 @@ const Forgot = ({ history }) => {
   const passwordFrgotForm = () => (
     <form>
       <div className="form-group">
-        <label className="text-muted">Email</label>
+        <label className="text-muted">Employee ID</label>
         <input onChange={handleChange('email')} value={email} type="email" className="form-control" />
       </div>
       <div>

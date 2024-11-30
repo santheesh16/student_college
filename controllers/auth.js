@@ -150,7 +150,7 @@ exports.signin = (req, res) => {
             });
           } else {
             return res.status(400).json({
-              error: "Roll number and password does not match",
+              error: "Employee ID and password does not match",
             });
           }
         } else {
@@ -182,12 +182,12 @@ exports.signin = (req, res) => {
                     });
                   } else {
                     return res.status(400).json({
-                      error: "Roll number and password does not match",
+                      error: "Employee ID and password does not match",
                     });
                   }
                 } else {
                   return res.status(400).json({
-                    error: "Roll number does not exits",
+                    error: "Employee ID does not exits",
                   });
                 }
               }
@@ -225,7 +225,7 @@ exports.signout = (req, res) => {
         );
       } else {
         return res.status(400).json({
-          error: "User with that roll number does not exist. Please signup",
+          error: "User with that Employee ID does not exist. Please signup",
         });
       }
     }

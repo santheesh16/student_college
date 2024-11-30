@@ -4,15 +4,16 @@ import { authenticate, isAuth } from "../auth/helpers";
 import { ToastContainer, toast } from 'react-toastify';
 import '../../node_modules/react-toastify/dist/ReactToastify.css';
 import "../App.css";
-import KPR_LOGO from "../assets/img/Kprlogo.webp";
 import Axios from "axios";
 
 const Signin = ({ history }) => {
   const [values, setValues] = useState({
     roll_number: "18st1",
     password: "kpriet@123",
-    buttonText: "Submit"
+    buttonText: "Submit",
   });
+
+  const [bgColor, setBgColor] = useState("#f8f9fa"); // Initial background color
 
   const { roll_number, password, buttonText } = values;
 
@@ -26,45 +27,53 @@ const Signin = ({ history }) => {
 
     Axios.post("/api/signin", {
       roll_number: roll_number,
-      password: password
+      password: password,
     })
       .then((response) => {
         console.log("SIGNIN SUCCESS", response);
-        //save the response
         authenticate(response, () => {
           setValues({
             ...values,
             roll_number: "",
-            register_number: "",
-            name: "",
-            department: "",
             password: "",
             buttonText: "Submitted",
           });
-          isAuth() && isAuth().role === 'admin'
+          isAuth() && isAuth().role === "admin"
             ? history.push("/lab-attendance")
             : history.push("/home");
         });
+        setBgColor("#d4edda"); // Change background color on successful sign-in
       })
       .catch((error) => {
         console.log("SIGNIN ERROR", error.response.data);
         setValues({ ...values, buttonText: "Submit" });
         toast.error(error.response.data.error);
+        setBgColor("#f8d7da"); // Change background color on error
       });
   };
 
   const signinForm = () => (
-
-    <div className="container col-sm-11 border border-dark rounded bg-light p-3 ">
+    <div className="container border border-dark p-4">
       <form>
         <div className="form-group">
-
-          <label className="col-sm-5 col-form-label font-weight-bold ">Roll Number</label>
-          <input onChange={handleChange('roll_number')} value={roll_number} type="text" className="form-control" />
+          <label className="font-weight-bold">Employee ID</label>
+          <input
+            onChange={handleChange("roll_number")}
+            value={roll_number}
+            type="text"
+            className="form-control"
+            placeholder="Enter Employee ID"
+          />
         </div>
         <div className="form-group">
-          <label className="col-sm-5 col-form-label font-weight-bold">Password</label>
-          <input onChange={handleChange('password')} value={password} type="text" className="form-control" />
+          <label className="font-weight-bold">Password</label>
+          <input
+            onChange={handleChange("password")}
+            value={password}
+            type="password"
+            className="form-control"
+            placeholder="Enter Password"
+          />
         </div>
         <div className="form-row">
           <div className="form-group col-md-6">
@@ -77,24 +86,30 @@ const Signin = ({ history }) => {
               Forgot <Link to="/forgot">password?</Link>
             </p>
           </div>
-
         </div>
-
       </form>
     </div>
   );
 
   return (
-    <div className="bg">
-      <img src={KPR_LOGO} alt="clg-logo" width="400px" height="150px" />
-      <div className="col-md-5 offset-md-3 p-3">
+    <div
+      className="d-flex justify-content-center align-items-center bg"
+      style={{
+        minHeight: "100vh",
+        backgroundColor: bgColor, // Dynamic background color
+      }}
+    >
+      <div className="col-md-4 d-flex flex-column align-items-center">
+        <h1 className="text-white text-center">Private Limited Company (Pvt Ltd)</h1>
         <ToastContainer />
         {isAuth() ? <Redirect to="/" /> : null}
         {signinForm()}
       </div>
     </div>
   );
+  
+
+  
 };
 
 export default Signin;
-

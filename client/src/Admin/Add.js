@@ -142,7 +142,7 @@ const Signup = () => {
           />
         </div>
         <div className="form-group col-md-6">
-          <label className="col-form-label">Roll Number</label>
+          <label className="col-form-label">Employee ID</label>
           <input
             onChange={handleChange("rollNumber")}
             value={rollNumber}
