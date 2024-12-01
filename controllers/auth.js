@@ -293,7 +293,7 @@ exports.forgotPassword = (req, res, next) => {
       const token = jwt.sign(payload, secret, { expiresIn: '15m' })
       const link = `${process.env.CLIENT_URL}/reset-password/${user[0].roll_number}/${token}`
       const output =
-        `<h3>KPR Institute Of Engineering and Technology</h3>
+        `<h3>Private Limited Company</h3>
           <p>Click the link <a href=${link}>${link}</a> to reset your password</p>`;
 
       let transporter = nodemailer.createTransport({

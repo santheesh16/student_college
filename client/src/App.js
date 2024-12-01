@@ -22,7 +22,7 @@ class App extends React.Component {
     <div className="text-center">
     <div>
       <p >
-          <h1 className="font-weight-bolder text-center p-5">Welcome <br/> To <br/> KPR Institute Of Engineering And Technology</h1>
+          <h1 className="font-weight-bolder text-center p-5">Welcome <br/> To <br/> Private Limited Company</h1>
       </p>
       
       <div className="col-md-2 rounded mx-auto d-block">
